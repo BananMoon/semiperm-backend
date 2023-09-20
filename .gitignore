@@ -4,8 +4,11 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-src/main/resources/application-sercret.yml
+src/main/resources/application-db.yml
 src/main/resources/application-oauth.yml
+out/
+build/
+.idea/
 
 ### STS ###
 .apt_generated

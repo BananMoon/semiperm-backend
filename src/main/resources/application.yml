@@ -32,14 +32,3 @@ test:
 
   profiles:
     include: oauth
-  application:
-    name: semiperm-backend
-  #  config:
-  #    activate:
-  #      on-profile: local
-
-
-#app:
-#  version: ver.prototype
-#  accesstoken-available-period: 60
-#  refreshtoken-available-period: 60
