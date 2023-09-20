@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: semiperm-backend
+
+  profiles:
+    active: local
+    group:
+      local: db, oauth
+      prod: db, oauth
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+logging:
+  level:
+    org.hibernate:
+      SQL: debug
+      type: trace
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+logging:
+  level:
+    org.hibernate:
+      SQL: error
+
+test:
+  redirect-uri: "https://example.com/oauth"
+
+  profiles:
+    include: oauth
+  application:
+    name: semiperm-backend
+  #  config:
+  #    activate:
+  #      on-profile: local
+
+
+#app:
+#  version: ver.prototype
+#  accesstoken-available-period: 60
+#  refreshtoken-available-period: 60

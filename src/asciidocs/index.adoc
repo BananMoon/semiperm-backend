@@ -1,0 +1,15 @@
+= Semiperm 백엔드 API 문서
+Spring Rest Docs 기반으로 만들어진 문서입니다.
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs // 문서에 표기되는 코드들의 하이라이팅을 highlightjs를 사용
+:toc: left // toc (Table Of Contents)를 문서의 좌측에 두기
+:toclevels: 2
+:sectlinks:
+
+[[Member-API]]
+== Member API
+
+[Member-등록]]
+=== Member 등록
+operation::member/member-creation[snippets='http-request,http-response,response-fields']
