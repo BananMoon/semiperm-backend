@@ -1,6 +1,5 @@
 package com.project.semipermbackend.auth.security;
 
-import com.project.semipermbackend.auth.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,14 +15,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity // 시큐리티 필터 추가 +스프링 시큐리티가 활성화가 되어 있는데 어떤 설정을 해당파일에서 하겠다.
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2AccessTokenAuthenticationFilter oAuth2AccessTokenAuthenticationFilter;
     private final AuthenticationCheckFilter authenticationCheckFilter;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
 
     private final String[] POST_PERMITTED_URLS = {
-//            "/oauth2/login/*",
+            "/oauth2/login/*",
             "/member"
     };
 
@@ -49,8 +47,7 @@ public class SecurityConfig {
 
                 .oauth2Login()
                 .successHandler(oAuth2SuccessHandler)
-                .failureHandler(oAuth2FailureHandler)
-                .userInfoEndpoint().userService(customOAuth2UserService);
+                .failureHandler(oAuth2FailureHandler);
 
         httpSecurity
                 // TODO oauth-client 라이브러리 사용하면 이거 생략 가능!!!

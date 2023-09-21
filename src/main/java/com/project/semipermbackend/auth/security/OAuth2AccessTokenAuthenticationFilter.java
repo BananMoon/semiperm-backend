@@ -55,7 +55,7 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
         log.info("소셜 로그인 타입 : {}", socialType.getSocialName());
 
         // AuthenticationManager에게 인증 요청
-        return this.getAuthenticationManager().authenticate(new SocialTypeAccessToken(accessToken, socialType));    // CustomOAuth2 객체 있어??
+        return this.getAuthenticationManager().authenticate(new CustomAuthenticationToken(accessToken, socialType));    // CustomOAuth2 객체 있어??
     }
 
     private SocialType extractSocialTypeFrom(HttpServletRequest request) {

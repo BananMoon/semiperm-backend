@@ -2,10 +2,10 @@ package com.project.semipermbackend.auth.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.semipermbackend.auth.dto.AuthResponseDto;
-import com.project.semipermbackend.auth.entity.CustomOAuth2User;
+import com.project.semipermbackend.auth.entity.CustomOAuth2UserDetails;
 import com.project.semipermbackend.auth.jwt.JwtTokenProvider;
 import com.project.semipermbackend.auth.service.AuthService;
-import com.project.semipermbackend.auth.service.CustomOAuth2UserService;
+import com.project.semipermbackend.auth.service.CustomOAuth2UserDetailsService;
 import com.project.semipermbackend.common.code.FlagYn;
 import com.project.semipermbackend.common.dto.ApiResultDto;
 import com.project.semipermbackend.domain.account.Account;
@@ -21,11 +21,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
+
+/**
+ * 역할 : 기존 UserDetails의 service 메서드가 할 일을 대신한다.
+ * 1. Account 조회
+ * 1.1 존재하지 않으면 계정 생성 후 회원가입 유도 (Success 응답)
+ * 1.2. 존재하면 회원인지 여부 확인
+ * 2. MemberYn = Y?
+ * 2.1. Y이면 토큰 생성 -> 로그인 (Success 응답)
+ * 2.2. N이면 회원가입 유도 (Success 응답, 인증은 했으나 회원가입하지 않은 케이스)
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
-    private final CustomOAuth2UserService customOauth2UserService;
+    private final CustomOAuth2UserDetailsService customOauth2UserDetailsService;
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -34,10 +44,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     @Override
     @Transactional
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        CustomOAuth2User principal = (CustomOAuth2User) authentication.getPrincipal();
+        CustomOAuth2UserDetails principal = (CustomOAuth2UserDetails) authentication.getPrincipal();
 
         // 0. Account 조회
-        Optional<Account> optionalAccount = customOauth2UserService.getAccount(principal);
+        Optional<Account> optionalAccount = authService.getAccount(principal);
 
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

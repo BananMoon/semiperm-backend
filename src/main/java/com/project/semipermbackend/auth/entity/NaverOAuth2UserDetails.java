@@ -1,6 +1,5 @@
 package com.project.semipermbackend.auth.entity;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,12 +22,12 @@ import java.util.Map;
  */
 @SuperBuilder
 @Getter
-public class NaverOAuth2User extends CustomOAuth2User {
+public class NaverOAuth2UserDetails extends CustomOAuth2UserDetails {
 //    String profileImageUrl;
     String nickname;    // social type마다 주는 곳 다를 듯.
 
-    protected NaverOAuth2User(String socialId, String email, SocialType socialType,
-                            String profileImageUrl, String nickname) {
+    protected NaverOAuth2UserDetails(String socialId, String email, SocialType socialType,
+                                     String profileImageUrl, String nickname) {
         super(socialType, socialId, email, profileImageUrl);
 //        this.socialId = socialId;
 //        this.userName = userName;

@@ -14,14 +14,14 @@ import java.util.List;
  * Author      : 문 윤지
  * History     : [2022-07-24] create Class
  */
-public class SocialTypeAccessToken extends AbstractAuthenticationToken {
+public class CustomAuthenticationToken extends AbstractAuthenticationToken {
     private Object principal;   // CustomOAuth2User
     @Getter
     private String accessToken;
     @Getter
     private SocialType socialType;
 
-    public SocialTypeAccessToken(String accessToken, SocialType socialType) {
+    public CustomAuthenticationToken(String accessToken, SocialType socialType) {
         super(null);
         this.accessToken = accessToken;
         this.socialType = socialType;
@@ -29,7 +29,7 @@ public class SocialTypeAccessToken extends AbstractAuthenticationToken {
     }
 
     @Builder
-    public SocialTypeAccessToken(Object principal, Collection<? extends GrantedAuthority> authorities) {
+    public CustomAuthenticationToken(Object principal, Collection<? extends GrantedAuthority> authorities) {
         // 권한 사용하지 않으므로..
         super(List.of());
         this.principal = principal;

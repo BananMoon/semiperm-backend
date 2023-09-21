@@ -7,30 +7,20 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 import java.util.Map;
 
-/**
- {
- "id": "113331245371216057262",
- "email": "younji1115@gmail.com",
- "verified_email": true,
- "name": "문윤지",
- "given_name": "윤지",
- "family_name": "문",
- "picture": "https://lh3.googleusercontent.com/a/AAcHTtcXokGzsG_2yHZQx4rfm7-Cz4nW92REuyg-J2wlBBGrrmg=s96-c",
- "locale": "ko"
- }
- */
-@Getter
 @SuperBuilder
-public class GoogleOAuth2User extends CustomOAuth2User {
-//    String profileImgUrl;
+@Getter
+public class KakaoOAuth2UserDetails extends CustomOAuth2UserDetails {
+//    account_email profile_image profile_nickname
+//    String profileImageUrl;
+    String nickname;
 
-    protected GoogleOAuth2User(SocialType socialType, String socialId, String email, String profileImageUrl) {
+    protected KakaoOAuth2UserDetails(String socialId, String email, SocialType socialType,
+                                     String profileImageUrl, String nickname) {
         super(socialType, socialId, email, profileImageUrl);
 //        this.profileImageUrl = profileImageUrl;
+        this.nickname = nickname;
     }
-    // nickname 없네..
 
-    // TODO 얘네 어떻게 없애지?
     @Override
     public Map<String, Object> getAttributes() {
         return null;
@@ -43,6 +33,6 @@ public class GoogleOAuth2User extends CustomOAuth2User {
 
     @Override
     public String getName() {
-        return null;
+        return super.userName;
     }
 }

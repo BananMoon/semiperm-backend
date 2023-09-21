@@ -1,20 +1,18 @@
 package com.project.semipermbackend.auth.entity;
 
 
-import com.project.semipermbackend.domain.account.Account;
-
 import java.util.Map;
 /** 사용하지 않는 클래스!!!!!!!!!!!
 */
 
 public class OAuth2UserInfoFactory {
-    public static CustomOAuth2User getCustomOAuth2User(SocialType socialType, Map<String, Object> attributes) {
+    public static CustomOAuth2UserDetails getCustomOAuth2User(SocialType socialType, Map<String, Object> attributes) {
         switch (socialType) {
-            case APPLE: return AppleOAuth2User.builder()
+            case APPLE: return AppleOAuth2UserDetails.builder()
                     .socialType(socialType)
                     .build();
 //            case KAKAO: return new KakaoOAuth2UserInfo(attributes);
-            case NAVER: return NaverOAuth2User.builder()
+            case NAVER: return NaverOAuth2UserDetails.builder()
                     .socialType(socialType)
                     .build();
 //            case KAKAO: return KakaoOAuth2User.builder()
