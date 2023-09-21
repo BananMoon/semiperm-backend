@@ -1,6 +1,7 @@
 package com.project.semipermbackend.community.controller;
 
 import com.project.semipermbackend.common.dto.ApiResultDto;
+import com.project.semipermbackend.community.dto.PostCreation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,10 +12,12 @@ import javax.validation.Valid;
 @RequestMapping("/community")
 @RestController
 public class CommunityController {
+    private fianl CommunityService communityService;
+
     // 게시글 등록
     // request
     // response : post_id
-    /*@PostMapping("/post")
+    @PostMapping("/post")
     public ResponseEntity<ApiResultDto<PostCreation.ResponseDto>> postCreation(@Valid @RequestBody PostCreation.RequestDto postCreation) {
 
     }
@@ -35,7 +38,7 @@ public class CommunityController {
     @GetMapping("/post/{postId}/comment")
     public ResponseEntity<ApiResultDto<CommentView.ResponseDto>> commentCreation(@Valid @RequestBody CommentView.RequestDto commentView) {
 
-    }*/
+    }
 
     // 게시글 좋아요
 
