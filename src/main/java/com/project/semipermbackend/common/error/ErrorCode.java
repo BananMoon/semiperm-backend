@@ -13,7 +13,14 @@ public enum ErrorCode {
 
     NOT_PROPER_SOCIALLOGIN_TYPE(SC_BAD_REQUEST, "적절하지 않은 소셜로그인 타입입니다."),
     NOT_FOUND_MEMBER(SC_NOT_FOUND, "존재하지 않는 회원입니다. 회원가입이 필요합니다."),
-    NEED_SONAIL_AUTH_INFO(SC_NOT_ACCEPTABLE, "소셜로그인 인증되지 않은 사용자입니다. 인증이 필요합니다.(Account 계정 정보 X)");
+    NEED_SONAIL_AUTH_INFO(SC_NOT_ACCEPTABLE, "소셜로그인 인증되지 않은 사용자입니다. 인증이 필요합니다.(Account 계정 정보 X)"),
+
+//    token
+    TOKEN_EXPIRED_ERROR(SC_BAD_REQUEST, "JWT 토큰이 만료되었습니다."),
+    UNSUPPORTED_TOKEN_ERROR(SC_NOT_ACCEPTABLE, "지원하지 않는 JWT 토큰입니다."),
+    JWT_ERROR(SC_NOT_ACCEPTABLE, "JWT 토큰 관련 문제 발생하였습니다."),
+    ERROR_DURING_FILTER(SC_CONFLICT, "필터 수행 중 문제 발생하였습니다.")
+    ;
 
     private final int status;
     private final String message;

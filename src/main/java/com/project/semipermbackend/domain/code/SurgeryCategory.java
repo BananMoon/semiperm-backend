@@ -2,14 +2,12 @@ package com.project.semipermbackend.domain.code;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.project.semipermbackend.common.code.EnumMapperType;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.stream.Stream;
 
-@Getter
 @RequiredArgsConstructor
-public enum Category implements EnumMapperType {
+public enum SurgeryCategory implements EnumMapperType {
     SMP("SMP두피"),
     HAIRLINE("헤어라인"),
     EYEBROW_TATOO("눈썹문신"),
@@ -26,10 +24,15 @@ public enum Category implements EnumMapperType {
         return name();
     }
 
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
     @JsonCreator
-    public static Category inputStrToEnum(String input) {
-        return Stream.of(Category.values())
-                .filter(category -> category.name().equals(input))
+    public static SurgeryCategory inputStrToEnum(String input) {
+        return Stream.of(SurgeryCategory.values())
+                .filter(category -> category.title.equals(input))
                 .findFirst()
                 .orElse(null);
     }

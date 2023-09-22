@@ -10,4 +10,8 @@ import lombok.NoArgsConstructor;
 public class ErrorResultResponseDto {
     private String code;
     private String message;
+
+    public static ErrorResultResponseDto of(ErrorCode errorCode, String msg) {
+        return new ErrorResultResponseDto(errorCode.name(), msg);
+    }
 }
