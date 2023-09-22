@@ -1,5 +1,6 @@
 package com.project.semipermbackend.auth.security;
 
+import com.project.semipermbackend.auth.security.filter.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ public class SecurityConfig {
     private final AuthenticationCheckFilter authenticationCheckFilter;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
+    private final AuthenticationExceptionHandlerFilter authenticationExceptionHandlerFilter;
 
     private final String[] POST_PERMITTED_URLS = {
             "/oauth2/login/*",
@@ -54,6 +56,7 @@ public class SecurityConfig {
                 .addFilterBefore(oAuth2AccessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 // TODO 필터랑 별개로 컨트롤러 타지않고 그냥 PASS 시키는 이유?
                 .addFilterBefore(authenticationCheckFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(authenticationExceptionHandlerFilter, OAuth2AccessTokenAuthenticationFilter.class)
          ;
 
         return httpSecurity.build();

@@ -1,11 +1,15 @@
 package com.project.semipermbackend.auth.jwt;
 
+import com.project.semipermbackend.auth.exception.TokenInvalidException;
+import com.project.semipermbackend.common.error.ErrorCode;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -48,15 +52,15 @@ public class JwtTokenProvider {
         return signingKey;
     }
 
-    public String createAccessToken(String email) {
-        return createToken(email, ACCESS_TOKEN);
+    public String createAccessToken(Long memberId) {
+        return createToken(memberId, ACCESS_TOKEN);
     }
 
-    public String createRefreshToken(String email) {
-        return createToken(email, REFRESH_TOKEN);
+    public String createRefreshToken(Long memberId) {
+        return createToken(memberId, REFRESH_TOKEN);
     }
 
-    private String createToken(String email, String tokenType) {
+    private String createToken(Long memberId, String tokenType) {
         long expiredTimeInMillis = ACCESS_TOKEN.equals(tokenType) ? accessTokenValidityInMillis
                 : refreshTokenValidityInMillis;
         Map<String, Object> headers = new HashMap<>();
@@ -64,7 +68,7 @@ public class JwtTokenProvider {
         headers.put("alg", signatureAlgorithm.getValue());
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("email", email);
+        claims.put("memberId", memberId);
 
         Date expireTime = new Date();
         expireTime.setTime(expireTime.getTime() + expiredTimeInMillis);
@@ -80,33 +84,41 @@ public class JwtTokenProvider {
 
     // parseClaimsJwt() : 서명되지 않은 일반 텍스트 JWT 인스턴스를 반환
     // parseClaimsJws() : 결과 Claims JWS 인스턴스를 반환
-    public boolean validateToken(String jwt) {
+    public void validateToken(String jwt) {
         try{
-            Claims claims = jwtParser.parseClaimsJws(jwt)
-                    .getBody();
-            log.info("email from Jwt : {}", claims.get("email"));
-            return true;
+            getClaims(jwt);
         } catch (ExpiredJwtException e) {
-            log.info("JWT token is expired.");
-            log.trace("ExpiredJwtException Trace : ", e);
+            log.trace("JWT token is expired : ", e);
+            throw new TokenInvalidException(ErrorCode.TOKEN_EXPIRED_ERROR);
+
         } catch (UnsupportedJwtException e) {
-            log.info("JWT token is Unsupported.");
-            log.trace("UnsupportedJwtException Trace : ", e);
+            log.trace("Unsupported JWT token : ", e);
+            throw new TokenInvalidException(ErrorCode.UNSUPPORTED_TOKEN_ERROR);
+
         } catch (JwtException e) {
-            log.info("Jwt Exception.");
-            log.trace("JwtException Trace : ", e);
+            log.trace("Jwt Exception : ", e);
+            throw new TokenInvalidException(ErrorCode.JWT_ERROR);
         }
-        return false;
     }
 
-    public String getSubject(String jwt) {
+    public Claims getClaims(String jwt) {
         return jwtParser.parseClaimsJws(jwt)
-                .getBody().getSubject();
+                .getBody();
     }
 
-    // TODO 구현 해야함.
+    public String getMemberIdFromToken(String jwt) {
+        String memberId = getClaims(jwt).get("memberId").toString();
+        return memberId;
+    }
+
+    /**
+     * principal : memberId
+     * credential : null
+     * authorities : null
+     * @param jwt
+     */
     public Authentication getAuthentication(String jwt) {
-        String subject = getSubject(jwt);
-        return null;
+        UserDetails userDetails = new User(getMemberIdFromToken(jwt), "", AuthorityUtils.NO_AUTHORITIES);
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }

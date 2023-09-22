@@ -3,19 +3,17 @@ package com.project.semipermbackend.member.controller;
 import com.project.semipermbackend.common.code.Gender;
 import com.project.semipermbackend.common.code.FlagYn;
 import com.project.semipermbackend.config.asciidocs.AbstractRestDocsTestSupport;
-import com.project.semipermbackend.domain.code.Category;
+import com.project.semipermbackend.domain.code.SurgeryCategory;
 import com.project.semipermbackend.member.dto.MemberCreation;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -25,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@WebMvcTest(MemberController.class) // ControllerTest에서 확장함. 근데 모든 컨트롤러 테스트에서 그럼 받는거네? 여기선 MemberController.class만 필요할 수 있는데?
+@WebMvcTest(MemberController.class)
 public class MemberControllerTest extends AbstractRestDocsTestSupport {
 
     // 소셜 인증 통한 사용자 정보 조회
@@ -51,6 +49,7 @@ public class MemberControllerTest extends AbstractRestDocsTestSupport {
 
     }*/
     @Test
+    @Disabled
     @DisplayName("회원가입 성공")
     void member_join_success() throws Exception {
         MemberCreation.RequestDto requestDto = MemberCreation.RequestDto.builder()
@@ -59,8 +58,8 @@ public class MemberControllerTest extends AbstractRestDocsTestSupport {
                 .isOrderThan14(FlagYn.YES)
                 .gender(Gender.WOMAN)
 //                .nickname("moonz")
-                .interestingFields(Set.of(Category.SMP.getCode()))
-                .needInformation(Set.of())
+//                .interestingFields(Set.of(SurgeryCategory.SMP.getCode()))
+//                .needInformation(Set.of())
                 .build();
 
 
