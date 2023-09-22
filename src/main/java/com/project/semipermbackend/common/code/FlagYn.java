@@ -28,7 +28,7 @@ public enum FlagYn implements EnumMapperType {
     @JsonCreator
     public static FlagYn inputStrToEnum(String input) {
         return Stream.of(FlagYn.values())
-                .filter(flag -> flag.getTitle().equals(input.toUpperCase()))
+                .filter(flag -> flag.title.equals(input.toUpperCase()))
                 .findFirst()
                 .orElse(null);
     }

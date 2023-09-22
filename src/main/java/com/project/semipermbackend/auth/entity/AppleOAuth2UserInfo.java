@@ -6,7 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 import java.util.Map;
 @SuperBuilder
-public class AppleOAuth2UserDetails extends CustomOAuth2UserDetails {
+public class AppleOAuth2UserInfo extends CustomOAuth2UserInfo {
     // socialType, socialId 외에 apple에서 추가로 받는 정보들.
 
     /*private AppleOAuth2User(String userName, String socialId, String email, SocialType socialType, Map<String, Object> attributes) {

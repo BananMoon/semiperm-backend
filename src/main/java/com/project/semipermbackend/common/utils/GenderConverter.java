@@ -23,7 +23,7 @@ public class GenderConverter implements AttributeConverter<Gender, String> {
             return null;
         }
         for (Gender code : Gender.values()) {
-            if (code.getTitle().equals(dbData)) {
+            if (code.getTitle().equalsIgnoreCase(dbData)) {
                 return code;
             }
         }

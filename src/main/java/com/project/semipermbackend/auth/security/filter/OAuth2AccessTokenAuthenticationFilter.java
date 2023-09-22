@@ -1,7 +1,9 @@
-package com.project.semipermbackend.auth.security;
+package com.project.semipermbackend.auth.security.filter;
 
 import com.project.semipermbackend.auth.entity.SocialType;
 import com.project.semipermbackend.auth.exception.NotProperSocialLoginTypeException;
+import com.project.semipermbackend.auth.security.CustomAuthentication;
+import com.project.semipermbackend.auth.security.OAuth2AuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.Authentication;
@@ -55,7 +57,7 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
         log.info("소셜 로그인 타입 : {}", socialType.getSocialName());
 
         // AuthenticationManager에게 인증 요청
-        return this.getAuthenticationManager().authenticate(new CustomAuthenticationToken(accessToken, socialType));    // CustomOAuth2 객체 있어??
+        return this.getAuthenticationManager().authenticate(new CustomAuthentication(accessToken, socialType));    // CustomOAuth2 객체 있어??
     }
 
     private SocialType extractSocialTypeFrom(HttpServletRequest request) {

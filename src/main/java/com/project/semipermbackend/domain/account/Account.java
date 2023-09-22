@@ -6,16 +6,19 @@ import com.project.semipermbackend.common.utils.FlagYnConverter;
 import com.project.semipermbackend.domain.common.BaseTimeEntity;
 import com.project.semipermbackend.member.dto.MemberCreation;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
+
 @Getter
 @Builder
 @Entity
-@Table(name = "account")
+@Where(clause = "use_yn = true")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "account")
 public class Account extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

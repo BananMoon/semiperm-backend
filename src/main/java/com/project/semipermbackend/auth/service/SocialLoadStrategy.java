@@ -1,6 +1,6 @@
 package com.project.semipermbackend.auth.service;
 
-import com.project.semipermbackend.auth.entity.CustomOAuth2UserDetails;
+import com.project.semipermbackend.auth.entity.CustomOAuth2UserInfo;
 import com.project.semipermbackend.auth.entity.SocialType;
 import com.project.semipermbackend.auth.exception.LoginDisableException;
 import com.project.semipermbackend.common.error.ErrorCode;
@@ -40,9 +40,9 @@ public abstract class SocialLoadStrategy {
      * Access Token 이용해 조회하면 응답받는 값 중 PK 존재 (소셜 타입마다 Response 구조 상이함)
      * @param accessToken
      */
-    public CustomOAuth2UserDetails getOAuth2User (String accessToken) {
+    public CustomOAuth2UserInfo getOAuth2User (String accessToken) {
         HttpEntity<MultiValueMap<String, String>> request = prepareRequest(accessToken);
-        CustomOAuth2UserDetails socialUserInfoResponse = null;
+        CustomOAuth2UserInfo socialUserInfoResponse = null;
         try {
             socialUserInfoResponse = sendRequestToSocialApi(request);
         } catch (Exception e) {
@@ -58,7 +58,7 @@ public abstract class SocialLoadStrategy {
 
     public abstract HttpEntity<MultiValueMap<String, String>> prepareRequest(String accessToken);
 
-    protected abstract CustomOAuth2UserDetails sendRequestToSocialApi(HttpEntity<MultiValueMap<String, String>> request);
-    protected abstract CustomOAuth2UserDetails makeOAuth2User(Map<String, Object> attributes);
-    public abstract Account makeAccount(CustomOAuth2UserDetails oAuth2User);
+    protected abstract CustomOAuth2UserInfo sendRequestToSocialApi(HttpEntity<MultiValueMap<String, String>> request);
+    protected abstract CustomOAuth2UserInfo makeOAuth2User(Map<String, Object> attributes);
+    public abstract Account makeAccount(CustomOAuth2UserInfo oAuth2User);
 }

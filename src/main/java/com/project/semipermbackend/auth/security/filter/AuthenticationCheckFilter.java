@@ -1,4 +1,4 @@
-package com.project.semipermbackend.auth.security;
+package com.project.semipermbackend.auth.security.filter;
 
 import com.project.semipermbackend.auth.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -39,10 +39,10 @@ public class AuthenticationCheckFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwt = extractToken(request);
         // 토큰에서 인증 정보 추출
-        if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
+        if (StringUtils.hasText(jwt)) { // TODO 여기가 문제 같은데
+            jwtTokenProvider.validateToken(jwt);
             Authentication authentication = jwtTokenProvider.getAuthentication(jwt);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("토큰 유효성 검증에 통과하였습니다.(jwt : {})", jwt);
         }
 
         filterChain.doFilter(request, response);

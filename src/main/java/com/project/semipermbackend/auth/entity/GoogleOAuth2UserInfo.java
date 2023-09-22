@@ -21,10 +21,10 @@ import java.util.Map;
  */
 @Getter
 @SuperBuilder
-public class GoogleOAuth2UserDetails extends CustomOAuth2UserDetails {
+public class GoogleOAuth2UserInfo extends CustomOAuth2UserInfo {
 //    String profileImgUrl;
 
-    protected GoogleOAuth2UserDetails(SocialType socialType, String socialId, String email, String profileImageUrl) {
+    protected GoogleOAuth2UserInfo(SocialType socialType, String socialId, String email, String profileImageUrl) {
         super(socialType, socialId, email, profileImageUrl);
 //        this.profileImageUrl = profileImageUrl;
     }

@@ -1,14 +1,16 @@
-package com.project.semipermbackend.auth.security;
+package com.project.semipermbackend.auth.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.semipermbackend.auth.dto.AuthResponseDto;
-import com.project.semipermbackend.auth.entity.CustomOAuth2UserDetails;
+import com.project.semipermbackend.auth.entity.CustomOAuth2UserInfo;
+import com.project.semipermbackend.auth.exception.NotFoundException;
 import com.project.semipermbackend.auth.jwt.JwtTokenProvider;
 import com.project.semipermbackend.auth.service.AuthService;
-import com.project.semipermbackend.auth.service.CustomOAuth2UserDetailsService;
 import com.project.semipermbackend.common.code.FlagYn;
 import com.project.semipermbackend.common.dto.ApiResultDto;
 import com.project.semipermbackend.domain.account.Account;
+import com.project.semipermbackend.domain.member.Member;
+import com.project.semipermbackend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -35,7 +37,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
-    private final CustomOAuth2UserDetailsService customOauth2UserDetailsService;
+    private final MemberService memberService;
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -44,7 +46,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     @Override
     @Transactional
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        CustomOAuth2UserDetails principal = (CustomOAuth2UserDetails) authentication.getPrincipal();
+        CustomOAuth2UserInfo principal = (CustomOAuth2UserInfo) authentication.getPrincipal();
 
         // 0. Account 조회
         Optional<Account> optionalAccount = authService.getAccount(principal);
@@ -78,12 +80,21 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         Account account = optionalAccount.get();
         //  1. MemberYn : 회원이면 로그인
         if (isPresentAndMember(optionalAccount)) {
+            // 회원 조회 (Member)
+            Member member = memberService.getMemberByAccount(account)
+                    .orElseThrow(() -> new NotFoundException());
 
-            // SocialId, email 두 값을 jwt에 넣어놀까?
-            String email = account.getEmail();
+            // TODO memberSeq만 담도록 수정 예정.
 
-            String accessToken = jwtTokenProvider.createAccessToken(email);
-            String refreshToken = jwtTokenProvider.createRefreshToken(email);
+            // memberId, email 두 값을 jwt에 넣어놀까?
+//            String email = account.getEmail();
+            Long memberId = member.getMemberId();
+
+            String accessToken = jwtTokenProvider.createAccessToken(memberId);
+            String refreshToken = jwtTokenProvider.createRefreshToken(memberId);
+
+//            String accessToken = jwtTokenProvider.createAccessToken(email);
+//            String refreshToken = jwtTokenProvider.createRefreshToken(email);
 
             // 로그인
             account.login(refreshToken);

@@ -1,5 +1,6 @@
 package com.project.semipermbackend.member.service;
 
+import com.project.semipermbackend.auth.entity.SocialType;
 import com.project.semipermbackend.member.exception.UnauthenticatedUserException;
 import com.project.semipermbackend.common.utils.StringUtils;
 import com.project.semipermbackend.domain.account.Account;
@@ -10,6 +11,8 @@ import com.project.semipermbackend.member.dto.MemberCreation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 
 @RequiredArgsConstructor
@@ -42,5 +45,13 @@ public class MemberService {
         memberRepository.save(member);
         account.saveAgreeYnInfos(memberCreation);
         account.joinSuccess();
+    }
+
+    public Member getMember(Long memberId) {
+        return memberRepository.findByMemberId(memberId);
+    }
+
+    public Optional<Member> getMemberByAccount(Account account) {
+        return Optional.of(memberRepository.findByAccount(account));
     }
 }

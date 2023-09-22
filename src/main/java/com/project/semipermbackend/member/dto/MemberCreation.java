@@ -2,7 +2,7 @@ package com.project.semipermbackend.member.dto;
 
 import com.project.semipermbackend.common.code.FlagYn;
 import com.project.semipermbackend.common.code.Gender;
-import com.project.semipermbackend.domain.code.Category;
+import com.project.semipermbackend.domain.code.SurgeryCategory;
 import com.project.semipermbackend.domain.code.MemberNeeds;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +24,7 @@ public interface MemberCreation {
         @NonNull
         Gender gender;
 
-        Set<Category> interestingFields;
+        Set<SurgeryCategory> interestingFields;
         Set<MemberNeeds> needInformations;
 
         // 약관 동의

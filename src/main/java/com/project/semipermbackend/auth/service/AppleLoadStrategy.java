@@ -1,6 +1,6 @@
 package com.project.semipermbackend.auth.service;
 
-import com.project.semipermbackend.auth.entity.CustomOAuth2UserDetails;
+import com.project.semipermbackend.auth.entity.CustomOAuth2UserInfo;
 import com.project.semipermbackend.auth.entity.SocialType;
 import com.project.semipermbackend.domain.account.Account;
 import org.springframework.http.HttpEntity;
@@ -16,17 +16,17 @@ public class AppleLoadStrategy extends SocialLoadStrategy {
     }
 
     @Override
-    protected CustomOAuth2UserDetails sendRequestToSocialApi(HttpEntity<MultiValueMap<String, String>> request) {
+    protected CustomOAuth2UserInfo sendRequestToSocialApi(HttpEntity<MultiValueMap<String, String>> request) {
         return null;
     }
 
     @Override
-    protected CustomOAuth2UserDetails makeOAuth2User(Map<String, Object> attributes) {
+    protected CustomOAuth2UserInfo makeOAuth2User(Map<String, Object> attributes) {
         return null;
     }
 
     @Override
-    public Account makeAccount(CustomOAuth2UserDetails oAuth2User) {
+    public Account makeAccount(CustomOAuth2UserInfo oAuth2User) {
         return Account.builder()
                 .socialId(oAuth2User.getSocialId())
                 .socialType(SocialType.APPLE)

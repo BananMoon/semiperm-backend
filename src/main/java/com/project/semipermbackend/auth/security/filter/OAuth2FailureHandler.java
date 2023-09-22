@@ -1,4 +1,4 @@
-package com.project.semipermbackend.auth.security;
+package com.project.semipermbackend.auth.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.semipermbackend.common.dto.ApiResultDto;

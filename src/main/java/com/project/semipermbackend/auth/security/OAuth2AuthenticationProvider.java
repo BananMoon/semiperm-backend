@@ -1,6 +1,6 @@
 package com.project.semipermbackend.auth.security;
 
-import com.project.semipermbackend.auth.entity.CustomOAuth2UserDetails;
+import com.project.semipermbackend.auth.entity.CustomOAuth2UserInfo;
 import com.project.semipermbackend.auth.service.CustomOAuth2UserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -25,14 +25,14 @@ public class OAuth2AuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         // 사용자 조회 API 호출
-        CustomAuthenticationToken customAuthentication = (CustomAuthenticationToken) authentication;
-        CustomOAuth2UserDetails customOAuth2UserDetails = oAuth2UserService.getCustomOAuth2User(customAuthentication);    // customAuthentication1
+        CustomAuthentication customAuthentication = (CustomAuthentication) authentication;
+        CustomOAuth2UserInfo customOAuth2UserInfo = oAuth2UserService.getCustomOAuth2User(customAuthentication);    // customAuthentication1
 
         // TODO 사용자 조회 결과가 없을 때 ErrorHandler로 가나??
 
-        return CustomAuthenticationToken.builder()
-                .principal(customOAuth2UserDetails)
-                .authorities(customOAuth2UserDetails.getAuthorities())   // null..
+        return CustomAuthentication.builder()
+                .principal(customOAuth2UserInfo)
+                .authorities(customOAuth2UserInfo.getAuthorities())   // null..
                 .build();
         //AccessTokenSocialTypeToken객체를 반환한다. principal은 OAuth2UserDetails객체이다. (formLogin에서는 UserDetails를 가져와서 결국 ContextHolder에 저장하기 때문에)
         //이렇게 구현하면 UserDetails 타입으로 회원의 정보를 어디서든 조회할 수 있다.
@@ -42,6 +42,6 @@ public class OAuth2AuthenticationProvider implements AuthenticationProvider {
     // AuthenticationManager가 Provider 순회하며 특정 Authentication(OAuth2AccessToken 타입의 authentication 객체)을 지원하는 Provider라면 처리한다
     @Override
     public boolean supports(Class<?> authentication) {
-        return CustomAuthenticationToken.class.isAssignableFrom(authentication);
+        return CustomAuthentication.class.isAssignableFrom(authentication);
     }
 }

@@ -1,6 +1,5 @@
 package com.project.semipermbackend.domain.common;
 
-import com.project.semipermbackend.common.code.FlagYn;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
@@ -25,6 +24,6 @@ public abstract class BaseTimeEntity {
     private LocalDateTime lastModifiedDate = LocalDateTime.now();
 
     @Builder.Default
-    @Column(name = "use_yn", nullable = false, length = 2)
-    private FlagYn useYn = FlagYn.YES;
+    @Column(name = "use_yn", nullable = false)
+    private Boolean useYn = true;
 }

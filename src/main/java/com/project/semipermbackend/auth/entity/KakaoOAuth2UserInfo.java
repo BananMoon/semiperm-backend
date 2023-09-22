@@ -9,13 +9,13 @@ import java.util.Map;
 
 @SuperBuilder
 @Getter
-public class KakaoOAuth2UserDetails extends CustomOAuth2UserDetails {
+public class KakaoOAuth2UserInfo extends CustomOAuth2UserInfo {
 //    account_email profile_image profile_nickname
 //    String profileImageUrl;
     String nickname;
 
-    protected KakaoOAuth2UserDetails(String socialId, String email, SocialType socialType,
-                                     String profileImageUrl, String nickname) {
+    protected KakaoOAuth2UserInfo(String socialId, String email, SocialType socialType,
+                                  String profileImageUrl, String nickname) {
         super(socialType, socialId, email, profileImageUrl);
 //        this.profileImageUrl = profileImageUrl;
         this.nickname = nickname;

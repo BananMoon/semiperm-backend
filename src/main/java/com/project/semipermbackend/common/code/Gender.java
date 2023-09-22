@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.stream.Stream;
 
-@Getter
 @RequiredArgsConstructor
 public enum Gender implements EnumMapperType{
     WOMAN("W")
@@ -20,10 +19,16 @@ public enum Gender implements EnumMapperType{
         return name();
     }
 
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
     @JsonCreator
     public static Gender inputStrToEnum(String input) {
+        System.out.println("=============" + input);
         return Stream.of(Gender.values())
-                .filter(gender -> gender.getTitle().equals(input.toUpperCase()))
+                .filter(gender -> gender.title.equals(input.toUpperCase()))
                 .findFirst()
                 .orElse(null);
     }

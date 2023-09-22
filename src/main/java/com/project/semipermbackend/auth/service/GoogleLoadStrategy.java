@@ -1,7 +1,7 @@
 package com.project.semipermbackend.auth.service;
 
-import com.project.semipermbackend.auth.entity.CustomOAuth2UserDetails;
-import com.project.semipermbackend.auth.entity.GoogleOAuth2UserDetails;
+import com.project.semipermbackend.auth.entity.CustomOAuth2UserInfo;
+import com.project.semipermbackend.auth.entity.GoogleOAuth2UserInfo;
 import com.project.semipermbackend.auth.entity.SocialType;
 import com.project.semipermbackend.auth.jwt.JwtTokenProvider;
 import com.project.semipermbackend.domain.account.Account;
@@ -24,7 +24,7 @@ public class GoogleLoadStrategy extends SocialLoadStrategy {
     }
 
     @Override
-    protected GoogleOAuth2UserDetails sendRequestToSocialApi(HttpEntity request) {
+    protected GoogleOAuth2UserInfo sendRequestToSocialApi(HttpEntity request) {
         ResponseEntity<Map<String, Object>> responseEntity = restTemplate.exchange(SocialType.GOOGLE.getUserInfoRequestUrl(),
                 SocialType.GOOGLE.getMethod(),
                 request,
@@ -33,8 +33,8 @@ public class GoogleLoadStrategy extends SocialLoadStrategy {
     }
 
     @Override
-    protected GoogleOAuth2UserDetails makeOAuth2User(Map<String, Object> attributes) {
-        return GoogleOAuth2UserDetails.builder()
+    protected GoogleOAuth2UserInfo makeOAuth2User(Map<String, Object> attributes) {
+        return GoogleOAuth2UserInfo.builder()
                 .socialType(SocialType.GOOGLE)
                 .profileImgUrl(attributes.get("picture").toString())
                 .socialId(attributes.get("id").toString())
@@ -43,7 +43,7 @@ public class GoogleLoadStrategy extends SocialLoadStrategy {
     }
 
     @Override
-    public Account makeAccount(CustomOAuth2UserDetails oAuth2User) {
+    public Account makeAccount(CustomOAuth2UserInfo oAuth2User) {
         return Account.builder()
                 .socialId(oAuth2User.getSocialId())
                 .socialType(SocialType.GOOGLE)

@@ -1,7 +1,7 @@
 package com.project.semipermbackend.auth.service;
 
 import com.project.semipermbackend.auth.dto.AuthResponseDto;
-import com.project.semipermbackend.auth.entity.CustomOAuth2UserDetails;
+import com.project.semipermbackend.auth.entity.CustomOAuth2UserInfo;
 import com.project.semipermbackend.domain.account.Account;
 import com.project.semipermbackend.domain.account.AccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class AuthService {
         return new AuthResponseDto.OAuth2Success(savedAccount.getAccountId());
     }
 
-    public Optional<Account> getAccount(CustomOAuth2UserDetails principal) {
+    public Optional<Account> getAccount(CustomOAuth2UserInfo principal) {
         return accountRepository.findBySocialTypeAndEmail(principal.getSocialType(), principal.getEmail());
     }
 

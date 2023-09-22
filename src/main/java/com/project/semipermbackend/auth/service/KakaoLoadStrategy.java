@@ -1,7 +1,7 @@
 package com.project.semipermbackend.auth.service;
 
-import com.project.semipermbackend.auth.entity.CustomOAuth2UserDetails;
-import com.project.semipermbackend.auth.entity.KakaoOAuth2UserDetails;
+import com.project.semipermbackend.auth.entity.CustomOAuth2UserInfo;
+import com.project.semipermbackend.auth.entity.KakaoOAuth2UserInfo;
 import com.project.semipermbackend.auth.entity.SocialType;
 import com.project.semipermbackend.auth.jwt.JwtTokenProvider;
 import com.project.semipermbackend.domain.account.Account;
@@ -45,7 +45,7 @@ public class KakaoLoadStrategy extends SocialLoadStrategy {
     }
 
     @Override
-    protected KakaoOAuth2UserDetails sendRequestToSocialApi (HttpEntity<MultiValueMap<String, String>> request) {
+    protected KakaoOAuth2UserInfo sendRequestToSocialApi (HttpEntity<MultiValueMap<String, String>> request) {
         ResponseEntity<Map<String, Object>> responseEntity = restTemplate.exchange(SocialType.KAKAO.getUserInfoRequestUrl(),
                 SocialType.KAKAO.getMethod(),
                 request,
@@ -55,13 +55,13 @@ public class KakaoLoadStrategy extends SocialLoadStrategy {
 
 
     @Override
-    protected KakaoOAuth2UserDetails makeOAuth2User(Map<String, Object> attributes) {
+    protected KakaoOAuth2UserInfo makeOAuth2User(Map<String, Object> attributes) {
         Map<String, Object> kakaoAccounts = (Map<String, Object>)attributes.get("kakao_account");
 
         Map<String, Object> profile =  (Map<String, Object>)kakaoAccounts.get("profile");
         String email = kakaoAccounts.get("email").toString();
 
-        return KakaoOAuth2UserDetails.builder()
+        return KakaoOAuth2UserInfo.builder()
                 .socialType(SocialType.KAKAO)
                 .socialId(attributes.get("id").toString())
                 .email(email)
@@ -71,7 +71,7 @@ public class KakaoLoadStrategy extends SocialLoadStrategy {
     }
 
     @Override
-    public Account makeAccount(CustomOAuth2UserDetails oAuth2User) {
+    public Account makeAccount(CustomOAuth2UserInfo oAuth2User) {
         return Account.builder()
                 .socialId(oAuth2User.getSocialId())
                 .socialType(SocialType.KAKAO)

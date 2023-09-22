@@ -1,6 +1,7 @@
 package com.project.semipermbackend.auth.entity;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -11,7 +12,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
  */
 @SuperBuilder
 @Getter
-public abstract class CustomOAuth2UserDetails implements OAuth2User {
+public abstract class CustomOAuth2UserInfo implements OAuth2User {
     SocialType socialType;
     String socialId;
     String email;
@@ -19,7 +20,11 @@ public abstract class CustomOAuth2UserDetails implements OAuth2User {
 
     String profileImgUrl;
 
-    protected CustomOAuth2UserDetails(SocialType socialType, String socialId, String email, String profileImgUrl) {
+
+    @Getter
+    private Long memberId;
+
+    protected CustomOAuth2UserInfo(SocialType socialType, String socialId, String email, String profileImgUrl) {
         this.socialType = socialType;
         this.socialId = socialId;
         this.email = email;

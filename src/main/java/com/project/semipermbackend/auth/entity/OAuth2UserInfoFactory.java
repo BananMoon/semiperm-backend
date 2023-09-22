@@ -6,13 +6,13 @@ import java.util.Map;
 */
 
 public class OAuth2UserInfoFactory {
-    public static CustomOAuth2UserDetails getCustomOAuth2User(SocialType socialType, Map<String, Object> attributes) {
+    public static CustomOAuth2UserInfo getCustomOAuth2User(SocialType socialType, Map<String, Object> attributes) {
         switch (socialType) {
-            case APPLE: return AppleOAuth2UserDetails.builder()
+            case APPLE: return AppleOAuth2UserInfo.builder()
                     .socialType(socialType)
                     .build();
 //            case KAKAO: return new KakaoOAuth2UserInfo(attributes);
-            case NAVER: return NaverOAuth2UserDetails.builder()
+            case NAVER: return NaverOAuth2UserInfo.builder()
                     .socialType(socialType)
                     .build();
 //            case KAKAO: return KakaoOAuth2User.builder()
