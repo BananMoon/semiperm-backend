@@ -3,4 +3,4 @@ VALUES (1, sysdate(), sysdate(), true, 'N', 'banan99@naver.com', 'Y', null, 'Y',
         null, '2951698955', 'KAKAO');
 
 INSERT INTO member
-VALUES (1, sysdate(), sysdate(), true, '1999-11-20', 'W', '문윤지', 'kakao_116273556', 1);
+VALUES (1, sysdate(), sysdate(), true, '1999-11-20', 'W', 'kakao_116273556', 1);
