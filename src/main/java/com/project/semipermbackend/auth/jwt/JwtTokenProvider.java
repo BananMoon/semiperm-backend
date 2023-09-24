@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -120,5 +121,11 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String jwt) {
         UserDetails userDetails = new User(getMemberIdFromToken(jwt), "", AuthorityUtils.NO_AUTHORITIES);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    }
+
+    public static Long getMemberIdFromContext() {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return Long.valueOf(principal.getUsername());
     }
 }

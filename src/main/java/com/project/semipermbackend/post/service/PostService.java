@@ -1,6 +1,9 @@
 package com.project.semipermbackend.post.service;
 
-import com.project.semipermbackend.domain.comment.Comment;
+import com.project.semipermbackend.comment.dto.CommentFindDto;
+import com.project.semipermbackend.comment.service.CommentService;
+import com.project.semipermbackend.common.dto.Pagination;
+import com.project.semipermbackend.common.utils.PaginationUtil;
 import com.project.semipermbackend.domain.post.Post;
 import com.project.semipermbackend.domain.post.PostRepository;
 import com.project.semipermbackend.post.dto.PostCreation;
@@ -9,19 +12,19 @@ import com.project.semipermbackend.member.service.MemberService;
 import com.project.semipermbackend.post.dto.PostViewDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class PostService {
     private final MemberService memberService;
-//    private final CommentService commentService;
+    private final CommentService commentService;
     private final PostRepository postRepository;
 
     private final static int ONE_DAY_MIN_UNIT = 60*24;
@@ -30,14 +33,14 @@ public class PostService {
     @Transactional
     public PostCreation.ResponseDto create(Long memberId, PostCreation.RequestDto postCreation) {
         // 회원 조회
-        Member member = memberService.getMember(memberId);
+        Member member = memberService.getMemberByMemberId(memberId);
 
         // 게시글 생성
         Post savedPost = postRepository.save(postCreation.toEntity(member));
         return new PostCreation.ResponseDto(savedPost.getPostId());
     }
 
-    // 게시글 단일 조회
+    // 게시글 상세 조회
     public PostViewDto.Response getOne(Long postId) {
         Post post = postRepository.findByPostId(postId);
 
@@ -48,18 +51,10 @@ public class PostService {
             elaspedUploadTimeDayUnit = (int)(betweenTime.getSeconds() / 24); // 48시간 -> 2일 전, 47시간 -> 1일전
         }
 
-        // TODO 연관 댓글 :  Pagination 필요
-//        List<Comment> comments = commentService.getComments(post);
-//        CommentViewDto.Response commentDto = CommentViewDto.Response.from(comments);
+        Page<CommentFindDto.Response> commentsDto = commentService.getComments(1, 10, post);
 
-        return PostViewDto.Response.builder()
-                .nickname(post.getMember().getNickname())
-                .likeCount(post.getLikeCount())
-                .elapsedUploadTime(elaspedUploadTimeDayUnit)
-                .title(post.getTitle())
-                .content(post.getContent())
-//                .commentDto()
-                .build();
+        Pagination<CommentFindDto.Response> responsePagination = PaginationUtil.pageToPagination(commentsDto);
+        return PostViewDto.Response.from(post, elaspedUploadTimeDayUnit, responsePagination);
     }
 
     // 게시글 전체 조회
