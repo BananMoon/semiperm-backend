@@ -48,4 +48,12 @@ public class Post extends BaseTimeEntity {
     @Builder.Default
     @Column(name = "like_count", nullable = false)
     private int likeCount = 0;
+
+    @Builder.Default
+    @Column(name = "comment_count", nullable = false)
+    private int commentCount = 0;
+
+    public void addComment() {
+        commentCount+=1;
+    }
 }

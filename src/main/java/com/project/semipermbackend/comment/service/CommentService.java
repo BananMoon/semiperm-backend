@@ -1,0 +1,61 @@
+package com.project.semipermbackend.comment.service;
+
+import com.project.semipermbackend.comment.dto.CommentCreationDto;
+import com.project.semipermbackend.comment.dto.CommentFindDto;
+import com.project.semipermbackend.domain.comment.Comment;
+import com.project.semipermbackend.domain.comment.CommentGroupNoMapping;
+import com.project.semipermbackend.domain.comment.CommentRepository;
+import com.project.semipermbackend.domain.member.Member;
+import com.project.semipermbackend.domain.post.Post;
+import com.project.semipermbackend.domain.post.PostRepository;
+import com.project.semipermbackend.member.service.MemberService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@RequiredArgsConstructor
+@Service
+public class CommentService {
+    private final CommentRepository commentRepository;
+    private final MemberService memberService;
+    private final PostRepository postRepository;
+    @Transactional
+    public CommentCreationDto.Response create(Long memberId, Long postId, CommentCreationDto.Request commentCreation) {
+        // 1. 회원 조회
+        Member member = memberService.getMemberByMemberId(memberId);
+
+        // 2. 게시글 조회
+        Post post = postRepository.findByPostId(postId);
+        // 3. 댓글 생성
+        Comment convertedComment = commentCreation.toEntity(member, post);
+
+        // 3.1 groupNo 지정
+        CommentGroupNoMapping groupNo = commentRepository.findTopOrderByGroupNoDesc();
+        convertedComment.setGroupNo(groupNo.getGroupNo() + 1);
+        // 3.2 저장
+        Comment createdComment = commentRepository.save(convertedComment);
+
+        // 4. 게시글 댓글 갯수 업데이트
+        createdComment.getPost().addComment();
+
+        return new CommentCreationDto.Response(createdComment.getCommentId());
+    }
+
+    /**
+     * 게시글 상세 조회 시에만 호출된다.
+     * @param post
+     */
+    public Page<CommentFindDto.Response> getComments(int page,
+                                                     int pagePerSize,
+                                                     Post post) {
+        Pageable pageable = PageRequest.of(page-1, pagePerSize);
+
+        Page<CommentFindDto.Response> commentsPageDto = commentRepository.findPageByPostOrderByCreatedDateAsc(pageable, post)
+                .map(CommentFindDto.Response::from);
+
+        return commentsPageDto;
+    }
+}
