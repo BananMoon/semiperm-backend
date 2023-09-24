@@ -1,7 +1,7 @@
+# default: local
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://localhost:3306/SemipermDB?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     url: jdbc:mysql://192.168.0.9:3306/SemipermDB?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: semiperm
     password: semiperm123
@@ -11,22 +11,37 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+  jpa:
+    defer-datasource-initialization: false #true
+    hibernate:
+      ddl-auto: none #create
+#  sql:
+#    init:
+#      mode: always
+
 ---
+spring:
   config:
     activate:
-      on-profile: local
+      on-profile: test
+  datasource:
+    url: jdbc:mysql://34.64.96.216:3306/SemipermDB?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
   jpa:
     defer-datasource-initialization: true
     hibernate:
-      ddl-auto: create  # test
+      ddl-auto: create
   sql:
     init:
       mode: always
 
+
 ---
+spring:
   config:
     activate:
       on-profile: prod
+  datasource:
+    url: jdbc:mysql://34.64.96.216:3306/SemipermDB?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
   jpa:
     defer-datasource-initialization: false
     hibernate:
@@ -34,6 +49,3 @@ spring:
   sql:
     init:
       mode: never
-
-#  datasource:
-#  url: jdbc:mysql://34.64.96.216:3306/SemipermDB?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8

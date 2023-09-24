@@ -7,16 +7,25 @@ spring:
     group:
       local: db, oauth
       prod: db, oauth
----
-spring:
-  config:
-    activate:
-      on-profile: local
+      test: db, oauth
+
 logging:
   level:
     org.hibernate:
       SQL: debug
       type: trace
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+logging:
+  level:
+    org.hibernate:
+      SQL: debug
+      type: trace
+
 ---
 spring:
   config:
@@ -26,9 +35,3 @@ logging:
   level:
     org.hibernate:
       SQL: error
-
-test:
-  redirect-uri: "https://example.com/oauth"
-
-  profiles:
-    include: oauth
