@@ -1,6 +1,5 @@
 package com.project.semipermbackend.member.service;
 
-import com.project.semipermbackend.auth.entity.SocialType;
 import com.project.semipermbackend.member.exception.UnauthenticatedUserException;
 import com.project.semipermbackend.common.utils.StringUtils;
 import com.project.semipermbackend.domain.account.Account;
@@ -26,6 +25,7 @@ public class MemberService {
         Account account = accountRepository.findByAccountId(memberCreation.getAccountId())
                 .orElseThrow(() -> new UnauthenticatedUserException());
 
+        // TODO 모두 Y인지 유효성 체크
         account.saveAgreeYnInfos(memberCreation);
 
         // 2. 멤버 테이블 insert
@@ -47,7 +47,7 @@ public class MemberService {
         account.joinSuccess();
     }
 
-    public Member getMember(Long memberId) {
+    public Member getMemberByMemberId(Long memberId) {
         return memberRepository.findByMemberId(memberId);
     }
 

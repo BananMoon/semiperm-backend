@@ -24,6 +24,9 @@ public enum Gender implements EnumMapperType{
         return title;
     }
 
+    /**
+     * request로 들어온 String 값을 Enum으로 변환한다.
+     */
     @JsonCreator
     public static Gender inputStrToEnum(String input) {
         System.out.println("=============" + input);

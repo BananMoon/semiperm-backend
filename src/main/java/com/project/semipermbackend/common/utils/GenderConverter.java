@@ -6,6 +6,9 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.util.Objects;
 
+/**
+ * Entity 내 Enum 필드를 필드의 String 타입의 값으로 변환 후 저장한다.
+ */
 @Converter
 public class GenderConverter implements AttributeConverter<Gender, String> {
 

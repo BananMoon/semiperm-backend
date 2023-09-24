@@ -14,7 +14,9 @@ public enum SurgeryCategory implements EnumMapperType {
     EYELINE("아이라인"),
     LIPS_TATTO("입술문신"),
     SCAR_COVERUP("흉터 커버업"),
-    SEMIPERM_REMOVAL("반영구 제거");
+    SEMIPERM_REMOVAL("반영구 제거"),
+
+    ALL("전체")
     ;
 
     private final String title;

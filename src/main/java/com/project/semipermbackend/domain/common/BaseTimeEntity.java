@@ -23,7 +23,6 @@ public abstract class BaseTimeEntity {
     @Column(name = "last_modified_date", nullable = false)
     private LocalDateTime lastModifiedDate = LocalDateTime.now();
 
-    @Builder.Default
     @Column(name = "use_yn", nullable = false)
     private Boolean useYn = true;
 }
