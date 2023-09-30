@@ -15,6 +15,7 @@ public class GenderConverter implements AttributeConverter<Gender, String> {
     @Override
     public String convertToDatabaseColumn(Gender attribute) {
         if (Objects.isNull(attribute)) {
+            // TODO Error Handling
             return null;
         }
         return attribute.getTitle();
@@ -23,6 +24,7 @@ public class GenderConverter implements AttributeConverter<Gender, String> {
     @Override
     public Gender convertToEntityAttribute(String dbData) {
         if (Objects.isNull(dbData)) {
+        // TODO Error Handling
             return null;
         }
         for (Gender code : Gender.values()) {
@@ -30,7 +32,6 @@ public class GenderConverter implements AttributeConverter<Gender, String> {
                 return code;
             }
         }
-        // TODO Error Handling
         return null;
     }
 }

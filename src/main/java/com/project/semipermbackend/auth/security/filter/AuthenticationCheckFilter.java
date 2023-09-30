@@ -29,9 +29,8 @@ public class AuthenticationCheckFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     /**
      * 헤더의 JWT 추출하여 존재하면 객체 정보 셋팅
-     * @param request
-     * @param response
-     * @param filterChain
+     * - Authentication의 principal.getName() : memberId
+     * - Authentication의 principal.getCredentials() : accountId
      * @throws ServletException
      * @throws IOException
      */

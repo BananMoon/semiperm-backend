@@ -66,7 +66,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             log.info("계정 생성에 성공하였습니다.(accountSeq : {})", resultApiDto.getAccountId());
 
             /*성공 응답 케이스*/
-            ApiResultDto apiResultDto = ApiResultDto.success(resultApiDto);
+            ApiResultDto<AuthResponseDto.OAuth2Success> apiResultDto = ApiResultDto.success(resultApiDto);
 
             /** 실패 응답 케이스
              MemberCreation.ResponseDto responseDto = new MemberCreation.ResponseDto(savedAccount.getAccountId());
@@ -80,26 +80,17 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         Account account = optionalAccount.get();
         //  1. MemberYn : 회원이면 로그인
         if (isPresentAndMember(optionalAccount)) {
-            // 회원 조회 (Member)
             Member member = memberService.getMemberByAccount(account)
-                    .orElseThrow(() -> new NotFoundException());
+                    .orElseThrow(NotFoundException::new);
 
-            // TODO memberSeq만 담도록 수정 예정.
-
-            // memberId, email 두 값을 jwt에 넣어놀까?
-//            String email = account.getEmail();
-            Long memberId = member.getMemberId();
-
-            String accessToken = jwtTokenProvider.createAccessToken(memberId);
-            String refreshToken = jwtTokenProvider.createRefreshToken(memberId);
-
-//            String accessToken = jwtTokenProvider.createAccessToken(email);
-//            String refreshToken = jwtTokenProvider.createRefreshToken(email);
+            // memberId, accountId를 세팅
+            String accessToken = jwtTokenProvider.createAccessToken(member, account);
+            String refreshToken = jwtTokenProvider.createRefreshToken(member, account);
 
             // 로그인
-            account.login(refreshToken);
-            AuthResponseDto.Login responseDto = new AuthResponseDto.Login(accessToken, refreshToken);
-            ApiResultDto<AuthResponseDto.Login> apiResult = ApiResultDto.success(responseDto);
+            account.issueNewTokens(refreshToken);
+            AuthResponseDto.AuthTokens responseDto = new AuthResponseDto.AuthTokens(accessToken, refreshToken);
+            ApiResultDto<AuthResponseDto.AuthTokens> apiResult = ApiResultDto.success(responseDto);
 
             objectMapper.writeValue(response.getWriter(), apiResult);
             return;
@@ -107,7 +98,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         //  2. MemberYn : 회원아니면 회원가입 창
         if (isPresentButNotMember(optionalAccount)) {
             AuthResponseDto.OAuth2Success resultApiDto = new AuthResponseDto.OAuth2Success(account.getAccountId());
-            ApiResultDto apiResultDto = ApiResultDto.success(resultApiDto);
+            ApiResultDto<AuthResponseDto.OAuth2Success> apiResultDto = ApiResultDto.success(resultApiDto);
             objectMapper.writeValue(response.getWriter(), apiResultDto);
         }
 
@@ -118,7 +109,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     }
 
     private boolean isPresentButNotMember(Optional<Account> optionalAccount) {
-        return FlagYn.NO.equals(optionalAccount.get().getMemberYn());
+        return optionalAccount.isPresent() && FlagYn.NO.equals(optionalAccount.get().getMemberYn());
     }
 
 }

@@ -2,6 +2,7 @@ package com.project.semipermbackend.domain.code;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.project.semipermbackend.common.code.EnumMapperType;
+import com.project.semipermbackend.common.error.exception.InvalidRequestDataException;
 import lombok.RequiredArgsConstructor;
 
 import java.util.stream.Stream;
@@ -34,8 +35,8 @@ public enum SurgeryCategory implements EnumMapperType {
     @JsonCreator
     public static SurgeryCategory inputStrToEnum(String input) {
         return Stream.of(SurgeryCategory.values())
-                .filter(category -> category.title.equals(input))
+                .filter(category -> category.name().equals(input))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(InvalidRequestDataException::new);
     }
 }

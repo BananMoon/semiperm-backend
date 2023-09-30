@@ -23,20 +23,6 @@ import java.util.Map;
 @SuperBuilder
 @Getter
 public class NaverOAuth2UserInfo extends CustomOAuth2UserInfo {
-//    String profileImageUrl;
-    String nickname;    // social type마다 주는 곳 다를 듯.
-
-    protected NaverOAuth2UserInfo(String socialId, String email, SocialType socialType,
-                                  String profileImageUrl, String nickname) {
-        super(socialType, socialId, email, profileImageUrl);
-//        this.socialId = socialId;
-//        this.userName = userName;
-//        this.email = email;
-//        this.socialType = socialType;
-//        this.attributes = attributes;
-//        this.profileImageUrl = profileImageUrl;
-        this.nickname = nickname;
-    }
 
     @Override
     public Map<String, Object> getAttributes() {
@@ -50,6 +36,6 @@ public class NaverOAuth2UserInfo extends CustomOAuth2UserInfo {
 
     @Override
     public String getName() {
-        return super.userName;
+        return null;
     }
 }

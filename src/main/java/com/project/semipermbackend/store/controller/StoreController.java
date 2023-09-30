@@ -20,12 +20,12 @@ public class StoreController {
     // 찜 (저장하기)
     // memberId, request : place id
     // return :생성된/기존의 store_id
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<Void> saveStore(@RequestBody StoreSaveCreationDto.Request storeSaveCreation) {
         Long memberId = JwtTokenProvider.getMemberIdFromContext();
 
-        StoreSaveCreationDto.Response response = storeService.create(memberId, storeSaveCreation);
-        return null;
+        storeService.create(memberId, storeSaveCreation);
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -3,6 +3,7 @@ package com.project.semipermbackend.auth.service;
 import com.project.semipermbackend.auth.entity.CustomOAuth2UserInfo;
 import com.project.semipermbackend.auth.entity.NaverOAuth2UserInfo;
 import com.project.semipermbackend.auth.entity.SocialType;
+import com.project.semipermbackend.auth.exception.LoginDisableException;
 import com.project.semipermbackend.auth.jwt.JwtTokenProvider;
 import com.project.semipermbackend.domain.account.Account;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 public class NaverLoadStrategy extends SocialLoadStrategy {
@@ -29,7 +31,6 @@ public class NaverLoadStrategy extends SocialLoadStrategy {
 
     /**
      * 네이버 OpenAPI에 사용자 정보 조회 요청한다.
-     * @param request
      */
     @Override
     protected NaverOAuth2UserInfo sendRequestToSocialApi (HttpEntity<MultiValueMap<String, String>> request) {
@@ -39,6 +40,10 @@ public class NaverLoadStrategy extends SocialLoadStrategy {
                 SocialType.NAVER.getMethod(),
                 request,
                 responseType);
+
+        if (Objects.isNull(response.getBody())) {
+            throw new LoginDisableException();
+        }
 
         return makeOAuth2User((Map<String, Object>)response.getBody().get("response"));
     }
@@ -50,7 +55,7 @@ public class NaverLoadStrategy extends SocialLoadStrategy {
                 .socialId(attributes.get("id").toString())
                 .email(attributes.get("email").toString())
                 .profileImgUrl(attributes.get("profile_image").toString())
-                .nickname(attributes.get("nickname").toString())
+//                .nickname(attributes.get("nickname").toString())
                 .build();
     }
 

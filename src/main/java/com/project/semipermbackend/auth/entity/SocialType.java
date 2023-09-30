@@ -14,17 +14,8 @@ public enum SocialType {
     , APPLE("apple", "", HttpMethod.GET)
     ;
 
-    private String socialName;
-    private String UserInfoRequestUrl;
-    private HttpMethod method;
-
-    public static SocialType fromSocialName(String socialName) {
-        for (SocialType socialType : SocialType.values()) {
-            if (socialType.socialName.equals(socialName)) {
-                return socialType;
-            }
-        }
-        return null;
-    }
+    private final String socialName;
+    private final String UserInfoRequestUrl;
+    private final HttpMethod method;
 
 }

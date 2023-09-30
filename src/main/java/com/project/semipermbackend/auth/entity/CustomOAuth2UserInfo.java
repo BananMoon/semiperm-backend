@@ -1,7 +1,6 @@
 package com.project.semipermbackend.auth.entity;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -16,8 +15,6 @@ public abstract class CustomOAuth2UserInfo implements OAuth2User {
     SocialType socialType;
     String socialId;
     String email;
-    String userName;
-
     String profileImgUrl;
 
 

@@ -39,7 +39,7 @@ public class Member extends BaseTimeEntity {
 
     @ElementCollection(fetch = FetchType.LAZY)  // 바로 연달아 select문 수행 X. 필요할 때 N+1 발생
     @CollectionTable(name = "member_interest_fields", joinColumns = @JoinColumn(name = "member_id", nullable = false))
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)    // ENUM의 name값을 Database의 저장
     @Column(name = "field", length = 50, nullable = true)
     @Builder.Default
     private Set<SurgeryCategory> interestingFields = new HashSet<>();

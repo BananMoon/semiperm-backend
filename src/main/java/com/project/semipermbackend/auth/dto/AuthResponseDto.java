@@ -8,7 +8,7 @@ public class AuthResponseDto {
     // 로그인 성공 시 Response
     @Getter
     @AllArgsConstructor
-    public static class Login {
+    public static class AuthTokens {
         String accessToken;
         String refreshToken;
     }

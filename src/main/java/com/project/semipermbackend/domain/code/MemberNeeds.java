@@ -1,6 +1,7 @@
 package com.project.semipermbackend.domain.code;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.project.semipermbackend.common.error.exception.InvalidRequestDataException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +23,6 @@ public enum MemberNeeds {
         return Stream.of(MemberNeeds.values())
                 .filter(needs -> needs.name().equals(input))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(InvalidRequestDataException::new);
     }
 }

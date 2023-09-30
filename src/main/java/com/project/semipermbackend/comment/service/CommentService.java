@@ -2,6 +2,8 @@ package com.project.semipermbackend.comment.service;
 
 import com.project.semipermbackend.comment.dto.CommentCreationDto;
 import com.project.semipermbackend.comment.dto.CommentFindDto;
+import com.project.semipermbackend.common.error.ErrorCode;
+import com.project.semipermbackend.common.error.exception.EntityNotFoundException;
 import com.project.semipermbackend.domain.comment.Comment;
 import com.project.semipermbackend.domain.comment.CommentGroupNoMapping;
 import com.project.semipermbackend.domain.comment.CommentRepository;
@@ -28,12 +30,14 @@ public class CommentService {
         Member member = memberService.getMemberByMemberId(memberId);
 
         // 2. 게시글 조회
-        Post post = postRepository.findByPostId(postId);
+        Post post = postRepository.findByPostId(postId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_POST, postId));
+
         // 3. 댓글 생성
         Comment convertedComment = commentCreation.toEntity(member, post);
 
         // 3.1 groupNo 지정
-        CommentGroupNoMapping groupNo = commentRepository.findTopOrderByGroupNoDesc();
+        CommentGroupNoMapping groupNo = commentRepository.findTopByOrderByGroupNoDesc();
         convertedComment.setGroupNo(groupNo.getGroupNo() + 1);
         // 3.2 저장
         Comment createdComment = commentRepository.save(convertedComment);
@@ -46,7 +50,6 @@ public class CommentService {
 
     /**
      * 게시글 상세 조회 시에만 호출된다.
-     * @param post
      */
     public Page<CommentFindDto.Response> getComments(int page,
                                                      int pagePerSize,

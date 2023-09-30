@@ -1,5 +1,7 @@
 package com.project.semipermbackend.member.service;
 
+import com.project.semipermbackend.common.error.ErrorCode;
+import com.project.semipermbackend.common.error.exception.EntityNotFoundException;
 import com.project.semipermbackend.member.exception.UnauthenticatedUserException;
 import com.project.semipermbackend.common.utils.StringUtils;
 import com.project.semipermbackend.domain.account.Account;
@@ -23,7 +25,7 @@ public class MemberService {
     public void join(MemberCreation.RequestDto memberCreation) {
         // 1. 계정 테이블에서 조회
         Account account = accountRepository.findByAccountId(memberCreation.getAccountId())
-                .orElseThrow(() -> new UnauthenticatedUserException());
+                .orElseThrow(UnauthenticatedUserException::new);
 
         // TODO 모두 Y인지 유효성 체크
         account.saveAgreeYnInfos(memberCreation);
@@ -52,6 +54,13 @@ public class MemberService {
     }
 
     public Optional<Member> getMemberByAccount(Account account) {
-        return Optional.of(memberRepository.findByAccount(account));
+        return memberRepository.findByAccount(account);
+    }
+
+    @Transactional
+    public void logout(Long accountId) {
+        Account account = accountRepository.findByAccountId(accountId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_ACCOUNT, accountId));
+        account.logout();
     }
 }
