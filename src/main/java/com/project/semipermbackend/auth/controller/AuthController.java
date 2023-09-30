@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
 
-//    @PostMapping("/token-reissue")
     @PutMapping("/token-reissue")
     public ResponseEntity<ApiResultDto<AuthResponseDto.AuthTokens>> reissue() {
         Long accountId = JwtTokenProvider.getAccountIdFromContext();
