@@ -19,7 +19,7 @@ public interface PostViewDto {
         private String nickname;
 
         private int likeCount;
-        private int elapsedUploadTime;    // 경과 업로드 시각
+        private long elapsedUploadTimeSecondUnit;    // 경과 업로드 시각
 
         private int viewCount;
         @NotNull
@@ -29,11 +29,11 @@ public interface PostViewDto {
 
         Pagination<CommentFindDto.Response> comments;
 
-        public static Response from(Post post, int elaspedUploadTimeDayUnit, Pagination<CommentFindDto.Response> responsePagination) {
+        public static Response from(Post post, long uploadElaspedTimeDayUnit, Pagination<CommentFindDto.Response> responsePagination) {
             return PostViewDto.Response.builder()
                     .nickname(post.getMember().getNickname())
                     .likeCount(post.getLikeCount())
-                    .elapsedUploadTime(elaspedUploadTimeDayUnit)
+                    .elapsedUploadTimeSecondUnit(uploadElaspedTimeDayUnit)
                     .title(post.getTitle())
                     .content(post.getContent())
                     .comments(responsePagination)

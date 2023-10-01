@@ -16,20 +16,20 @@ import javax.validation.Valid;
 @RestController
 public class CommentController {
     private final CommentService commentService;
-
+    // 생성
     @PostMapping("/post/{postId}/comment")
     public ResponseEntity<ApiResultDto<CommentCreationDto.Response>> commentCreation(
             @PathVariable Long postId,
             @Valid @RequestBody CommentCreationDto.Request commentCreation) {
 
         Long memberId = JwtTokenProvider.getMemberIdFromContext();
-        CommentCreationDto.Response response = commentService.create(memberId, Long.valueOf(postId), commentCreation);
+        CommentCreationDto.Response response = commentService.create(memberId, postId, commentCreation);
 
         return new ResponseEntity<>(ApiResultDto.success(response), HttpStatus.CREATED);
     }
 
 
-    // 댓글 좋아요
+    // 좋아요
     @PostMapping("/comment/{commentId}/like")
     public ResponseEntity<Void> likePost(@PathVariable Long commentId) {
         commentService.likeOne(commentId);
