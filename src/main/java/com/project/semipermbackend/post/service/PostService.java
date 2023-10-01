@@ -32,15 +32,12 @@ public class PostService {
     private final CommentService commentService;
     private final PostRepository postRepository;
 
-    private final static int ONE_DAY_MIN_UNIT = 60*24;
-
-    // Member : post = 1:N
+    // 게시글 생성
     @Transactional
     public PostCreation.ResponseDto create(Long memberId, PostCreation.RequestDto postCreation) {
         // 회원 조회
         Member member = memberService.getMemberByMemberId(memberId);
 
-        // 게시글 생성
         Post savedPost = postRepository.save(postCreation.toEntity(member));
         return new PostCreation.ResponseDto(savedPost.getPostId());
     }
@@ -51,16 +48,17 @@ public class PostService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_POST, postId));
 
         // 경과 시각
-        Duration betweenTime = Duration.between(post.getCreatedDate(), LocalDateTime.now());
-        int elaspedUploadTimeDayUnit = 0;
-        if (betweenTime.getSeconds() > ONE_DAY_MIN_UNIT) {
-            elaspedUploadTimeDayUnit = (int)(betweenTime.getSeconds() / 24); // 48시간 -> 2일 전, 47시간 -> 1일전
-        }
+        long elapsedUploadTimeSecondUnit = getUploadElapsedTimeSecUnit(post.getCreatedDate());
 
         Page<CommentFindDto.Response> commentsDto = commentService.getComments(1, 10, post);
 
         Pagination<CommentFindDto.Response> responsePagination = PaginationUtil.pageToPagination(commentsDto);
-        return PostViewDto.Response.from(post, elaspedUploadTimeDayUnit, responsePagination);
+        return PostViewDto.Response.from(post, elapsedUploadTimeSecondUnit, responsePagination);
+    }
+
+    private long getUploadElapsedTimeSecUnit(LocalDateTime uploadedDate) {
+        Duration betweenTime = Duration.between(uploadedDate, LocalDateTime.now());
+        return betweenTime.getSeconds();
     }
 
     // 게시글 전체 조회 (최신순/인기순/정확순, 카테고리 필터링)

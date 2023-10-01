@@ -88,7 +88,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             String refreshToken = jwtTokenProvider.createRefreshToken(member, account);
 
             // 로그인
-            account.issueNewTokens(refreshToken);
+            account.setLoginStatus(refreshToken);
             AuthResponseDto.AuthTokens responseDto = new AuthResponseDto.AuthTokens(accessToken, refreshToken);
             ApiResultDto<AuthResponseDto.AuthTokens> apiResult = ApiResultDto.success(responseDto);
 
