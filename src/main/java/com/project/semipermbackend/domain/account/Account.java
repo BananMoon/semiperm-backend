@@ -64,7 +64,7 @@ public class Account extends BaseTimeEntity {
     @Column(name = "is_order_than_14", nullable = false, length = 2)
     private FlagYn isOrderThan14 = FlagYn.NO;
 
-    public void login(String refreshToken) {
+    public void setLoginStatus(String refreshToken) {
         this.refreshToken = refreshToken;
         this.lastLoginDate = LocalDate.now();
     }
@@ -77,5 +77,9 @@ public class Account extends BaseTimeEntity {
         this.personalInfoServiceUsageAgreeYn = memberCreation.getPersonalInfoServiceUsageAgreeYn();
         this.isOrderThan14 = memberCreation.getIsOrderThan14();
         this.agreeToADYn = memberCreation.getAgreeToADYn();
+    }
+
+    public void logout() {
+        this.refreshToken = null;
     }
 }
