@@ -47,4 +47,7 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "like_count")
     private int likeCount = 0;
 
+    public void addLike() {
+        this.likeCount += 1;
+    }
 }
