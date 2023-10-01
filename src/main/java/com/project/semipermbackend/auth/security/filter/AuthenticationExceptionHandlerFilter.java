@@ -14,7 +14,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -30,22 +29,15 @@ public class AuthenticationExceptionHandlerFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)  {
         try {
             filterChain.doFilter(request, response);
-        } catch (NotProperSocialLoginTypeException ex) {
-            setErrorResponse(response, ex.getErrorCode(), ex.getMessage());
-
-        } catch (TokenInvalidException ex) {
-            setErrorResponse(response, ex.getErrorCode(), ex.getMessage());
-
-        } catch (LoginDisableException ex) {
+        } catch (NotProperSocialLoginTypeException | TokenInvalidException | LoginDisableException ex) {
             setErrorResponse(response, ex.getErrorCode(), ex.getMessage());
 
         } catch (Exception ex) {    // 그외
             setErrorResponse(response, ErrorCode.ERROR_DURING_FILTER, ex.getMessage());
         }
-        filterChain.doFilter(request, response);
     }
 
 
@@ -62,4 +54,5 @@ public class AuthenticationExceptionHandlerFilter extends OncePerRequestFilter {
             log.error("ErrorResponse 객체를 json으로 전환하는 데에 실패하였습니다. (ErrorResponse : %s)", errorResponse.getCode());
         }
     }
+
 }
