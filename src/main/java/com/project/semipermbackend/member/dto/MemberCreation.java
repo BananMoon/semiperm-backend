@@ -6,7 +6,6 @@ import com.project.semipermbackend.domain.code.SurgeryCategory;
 import com.project.semipermbackend.domain.code.MemberNeeds;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NonNull;
 
 import java.time.LocalDate;
@@ -15,7 +14,7 @@ import java.util.Set;
 // TODO 유효성 체크 애노테이션 추가
 public interface MemberCreation {
     @Builder
-    @Data
+    @AllArgsConstructor
     class RequestDto {
         @NonNull
         Long accountId;
@@ -35,8 +34,4 @@ public interface MemberCreation {
         FlagYn agreeToADYn;
     }
 
-    @AllArgsConstructor
-    class ResponseDto {
-        Long accountId;
-    }
 }
