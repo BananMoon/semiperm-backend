@@ -11,4 +11,9 @@ public class BusinessException extends RuntimeException{
         super(errorCode.name() + " : " + errorCode.getMessage());
         this.errorCode = errorCode;
     }
+
+    protected BusinessException(ErrorCode errorCode, Long relatedId) {
+        super(errorCode.name() + " : " + errorCode.getMessage() + "(" + relatedId + ")");
+        this.errorCode = errorCode;
+    }
 }

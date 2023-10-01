@@ -18,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @RequiredArgsConstructor
 @Service
 public class CommentService {
@@ -37,8 +39,13 @@ public class CommentService {
         Comment convertedComment = commentCreation.toEntity(member, post);
 
         // 3.1 groupNo 지정
-        CommentGroupNoMapping groupNo = commentRepository.findTopByOrderByGroupNoDesc();
-        convertedComment.setGroupNo(groupNo.getGroupNo() + 1);
+        // TODO QueryDsl로 해결
+        CommentGroupNoMapping groupNo = commentRepository.findTopByPostOrderByGroupNoDesc(post);
+        if (Objects.isNull(groupNo.getGroupNo())) {
+            convertedComment.setGroupNo(0L);
+        } else {
+            convertedComment.setGroupNo(groupNo.getGroupNo() + 1);
+        }
         // 3.2 저장
         Comment createdComment = commentRepository.save(convertedComment);
 
@@ -56,9 +63,16 @@ public class CommentService {
                                                      Post post) {
         Pageable pageable = PageRequest.of(page-1, pagePerSize);
 
-        Page<CommentFindDto.Response> commentsPageDto = commentRepository.findPageByPostOrderByCreatedDateAsc(pageable, post)
+        return commentRepository.findPageByPostOrderByCreatedDateAsc(pageable, post)
                 .map(CommentFindDto.Response::from);
+    }
 
-        return commentsPageDto;
+    @Transactional
+    public void likeOne(Long commentId) {
+        // 코멘트 조회
+        Comment comment = commentRepository.findByCommentId(commentId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_COMMENT, commentId));
+
+        comment.addLike();
     }
 }

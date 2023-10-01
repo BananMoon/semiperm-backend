@@ -7,24 +7,34 @@ import com.project.semipermbackend.common.dto.ApiResultDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
-@RestController("/community/post")
+@RequestMapping("/community")
+@RestController
 public class CommentController {
     private final CommentService commentService;
 
-    @PostMapping("/{postId}/comment")
+    @PostMapping("/post/{postId}/comment")
     public ResponseEntity<ApiResultDto<CommentCreationDto.Response>> commentCreation(
             @PathVariable Long postId,
-            @RequestBody CommentCreationDto.Request commentCreation) {
+            @Valid @RequestBody CommentCreationDto.Request commentCreation) {
 
         Long memberId = JwtTokenProvider.getMemberIdFromContext();
-        CommentCreationDto.Response response = commentService.create(memberId, postId, commentCreation);
+        CommentCreationDto.Response response = commentService.create(memberId, Long.valueOf(postId), commentCreation);
 
         return new ResponseEntity<>(ApiResultDto.success(response), HttpStatus.CREATED);
+    }
+
+
+    // 댓글 좋아요
+    @PostMapping("/comment/{commentId}/like")
+    public ResponseEntity<Void> likePost(@PathVariable Long commentId) {
+        commentService.likeOne(commentId);
+
+        return ResponseEntity.ok().build();
     }
 
 

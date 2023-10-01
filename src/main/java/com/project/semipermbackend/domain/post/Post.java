@@ -54,6 +54,10 @@ public class Post extends BaseTimeEntity {
     private int commentCount = 0;
 
     public void addComment() {
-        commentCount+=1;
+        commentCount += 1;
+    }
+
+    public void addLike() {
+        likeCount += 1;
     }
 }

@@ -1,7 +1,10 @@
 package com.project.semipermbackend.auth.jwt;
 
+import com.project.semipermbackend.auth.dto.AuthResponseDto;
 import com.project.semipermbackend.auth.exception.TokenInvalidException;
 import com.project.semipermbackend.common.error.ErrorCode;
+import com.project.semipermbackend.domain.account.Account;
+import com.project.semipermbackend.domain.member.Member;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -49,19 +52,18 @@ public class JwtTokenProvider {
 
     private SecretKey createKey(String secretBaseKey) {
         byte[] baseKeyBytes = DatatypeConverter.parseBase64Binary(secretBaseKey);
-        SecretKeySpec signingKey = new SecretKeySpec(baseKeyBytes, signatureAlgorithm.getJcaName());
-        return signingKey;
+        return new SecretKeySpec(baseKeyBytes, signatureAlgorithm.getJcaName());
     }
 
-    public String createAccessToken(Long memberId) {
-        return createToken(memberId, ACCESS_TOKEN);
+    public String createAccessToken(Member member, Account account) {
+        return createToken(member, account, ACCESS_TOKEN);
     }
 
-    public String createRefreshToken(Long memberId) {
-        return createToken(memberId, REFRESH_TOKEN);
+    public String createRefreshToken(Member member, Account account) {
+        return createToken(member, account, REFRESH_TOKEN);
     }
 
-    private String createToken(Long memberId, String tokenType) {
+    private String createToken(Member member, Account account, String tokenType) {
         long expiredTimeInMillis = ACCESS_TOKEN.equals(tokenType) ? accessTokenValidityInMillis
                 : refreshTokenValidityInMillis;
         Map<String, Object> headers = new HashMap<>();
@@ -69,7 +71,8 @@ public class JwtTokenProvider {
         headers.put("alg", signatureAlgorithm.getValue());
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("memberId", memberId);
+        claims.put("memberId", member.getMemberId());
+        claims.put("accountId", account.getAccountId());
 
         Date expireTime = new Date();
         expireTime.setTime(expireTime.getTime() + expiredTimeInMillis);
@@ -108,24 +111,39 @@ public class JwtTokenProvider {
     }
 
     public String getMemberIdFromToken(String jwt) {
-        String memberId = getClaims(jwt).get("memberId").toString();
-        return memberId;
+        return getClaims(jwt).get("memberId").toString();
     }
-
+    public String getAccountIdFromToken(String jwt) {
+        return getClaims(jwt).get("accountId").toString();
+    }
     /**
      * principal : memberId
-     * credential : null
+     * credential : accountId
      * authorities : null
      * @param jwt
      */
     public Authentication getAuthentication(String jwt) {
+
         UserDetails userDetails = new User(getMemberIdFromToken(jwt), "", AuthorityUtils.NO_AUTHORITIES);
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, getAccountIdFromToken(jwt), userDetails.getAuthorities());
     }
 
     public static Long getMemberIdFromContext() {
         UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return Long.valueOf(principal.getUsername());
+    }
+    public static Long getAccountIdFromContext() {
+        String accountIdOfCredentials = (String) SecurityContextHolder.getContext().getAuthentication().getCredentials();
+        return Long.valueOf(accountIdOfCredentials);
+    }
+
+    public AuthResponseDto.AuthTokens reissueTokens(Member member, Account account) {
+        String accessToken = createAccessToken(member, account);
+        String refreshToken = createRefreshToken(member, account);
+        AuthResponseDto.AuthTokens responseDto = new AuthResponseDto.AuthTokens(accessToken, refreshToken);
+
+        account.setLoginStatus(refreshToken);
+        return responseDto;
     }
 }

@@ -1,11 +1,12 @@
 package com.project.semipermbackend.common.dto;
 
 import lombok.Builder;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
+@Getter // Serialize를 위해 필요
 public class Pagination<T> {
     private final int page;
 

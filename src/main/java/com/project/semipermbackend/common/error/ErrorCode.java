@@ -26,8 +26,9 @@ public enum ErrorCode {
     JWT_ERROR(SC_NOT_ACCEPTABLE, "JWT 토큰 관련 문제 발생하였습니다."),
     ERROR_DURING_FILTER(SC_CONFLICT, "필터 수행 중 문제 발생하였습니다.")
 
-    // post
-    , NOT_FOUND_POST(SC_NOT_FOUND, "해당 게시글이 존재하지 않습니다.");
+    // post & comment
+    , NOT_FOUND_POST(SC_NOT_FOUND, "해당 게시글이 존재하지 않습니다."),
+    NOT_FOUND_COMMENT(SC_NOT_FOUND, "해당 댓글이 존재하지 않습니다.");
 
 
     private final int status;

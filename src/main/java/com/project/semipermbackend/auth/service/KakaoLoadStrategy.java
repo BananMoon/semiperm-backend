@@ -29,12 +29,6 @@ import java.util.Map;
  */
 public class KakaoLoadStrategy extends SocialLoadStrategy {
 
-    /**
-     * headers : X
-     * params : grant_type, client_id, redirect_uri, code
-     * @param accessToken
-     * @return
-     */
     @Override
     public HttpEntity<MultiValueMap<String, String>> prepareRequest(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
@@ -66,7 +60,7 @@ public class KakaoLoadStrategy extends SocialLoadStrategy {
                 .socialId(attributes.get("id").toString())
                 .email(email)
                 .profileImgUrl(profile.get("thumbnail_image_url").toString())
-                .nickname(profile.get("nickname").toString())
+//                .nickname(profile.get("nickname").toString())
                 .build();
     }
 

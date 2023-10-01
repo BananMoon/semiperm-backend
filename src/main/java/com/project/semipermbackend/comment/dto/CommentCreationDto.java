@@ -4,11 +4,13 @@ import com.project.semipermbackend.domain.comment.Comment;
 import com.project.semipermbackend.domain.member.Member;
 import com.project.semipermbackend.domain.post.Post;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public interface CommentCreationDto {
+    @Data
     class Request {
         @Size(max = 255)
         @NotNull

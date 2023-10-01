@@ -2,7 +2,6 @@ package com.project.semipermbackend.domain.code;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.project.semipermbackend.common.code.EnumMapperType;
-import com.project.semipermbackend.common.code.Gender;
 import lombok.RequiredArgsConstructor;
 
 import java.util.stream.Stream;
@@ -30,7 +29,7 @@ public enum PostCategory implements EnumMapperType {
     @JsonCreator
     public static PostCategory inputStrToEnum(String input) {
         return Stream.of(PostCategory.values())
-                .filter(category -> category.title.equals(input))
+                .filter(category -> category.name().equals(input))
                 .findFirst()
                 .orElse(null);
     }

@@ -1,8 +1,11 @@
 package com.project.semipermbackend.member.controller;
 
+import com.project.semipermbackend.auth.jwt.JwtTokenProvider;
+import com.project.semipermbackend.common.dto.ApiResultDto;
 import com.project.semipermbackend.member.dto.MemberCreation;
 import com.project.semipermbackend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,11 +22,20 @@ public class MemberController {
      * @param memberCreation
      */
     @PostMapping
-    public ResponseEntity<Void> memberJoin(@Valid @RequestBody MemberCreation.RequestDto memberCreation) {
+    public ResponseEntity memberJoin(@Valid @RequestBody MemberCreation.RequestDto memberCreation) {
 
         memberService.join(memberCreation);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<ApiResultDto<Void>> logout() {
+        Long accountId = JwtTokenProvider.getAccountIdFromContext();
+
+        memberService.logout(accountId);
         return ResponseEntity.ok().build();
     }
+
 
     /**
      * 회원 수정
@@ -33,5 +45,4 @@ public class MemberController {
     public ResponseEntity<ApiResultDto<MemberUpdeate.ResponsDto>> memberUpdate() {
 
     }*/
-
 }
