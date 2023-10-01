@@ -4,10 +4,6 @@ import com.project.semipermbackend.domain.comment.Comment;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 public interface CommentFindDto {
     @Builder
     @Data
@@ -19,10 +15,11 @@ public interface CommentFindDto {
 
         private Long postId;
 
-//        private LocalDateTime createdAt;
+//        private LocalDateTime createdAt;  // TODO 필요 시 추가 예정
         private String nickname;
 
         private int likeCount;
+        private Long groupNo;
 
 
         public static Response from(Comment comment) {
@@ -33,6 +30,7 @@ public interface CommentFindDto {
                         .postId(comment.getPost().getPostId())
                         .nickname(comment.getMember().getNickname())
                         .likeCount(comment.getLikeCount())
+                        .groupNo(comment.getGroupNo())
                         .build();
         }
     }

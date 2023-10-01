@@ -36,23 +36,30 @@ public class CommentService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_POST, postId));
 
         // 3. 댓글 생성
-        Comment convertedComment = commentCreation.toEntity(member, post);
+        Comment newComment = commentCreation.toEntity(member, post);
 
-        // 3.1 groupNo 지정
-        // TODO QueryDsl로 해결
-        CommentGroupNoMapping groupNo = commentRepository.findTopByPostOrderByGroupNoDesc(post);
-        if (Objects.isNull(groupNo.getGroupNo())) {
-            convertedComment.setGroupNo(0L);
-        } else {
-            convertedComment.setGroupNo(groupNo.getGroupNo() + 1);
+        // 3.1 update groupNo
+        // parentId==0: 부모이므로 새 groupNo 사용 (parentId!=0: 자식은 dto 내 부모의 groupNo 사용)
+        if (isParentComment(commentCreation)) {
+            CommentGroupNoMapping groupNo = commentRepository.findTopByPostOrderByGroupNoDesc(post);
+            if (Objects.isNull(groupNo.getGroupNo())) {
+                newComment.setGroupNo(0L);
+            } else {
+                newComment.setGroupNo(groupNo.getGroupNo() + 1);
+            }
         }
+
         // 3.2 저장
-        Comment createdComment = commentRepository.save(convertedComment);
+        Comment createdComment = commentRepository.save(newComment);
 
         // 4. 게시글 댓글 갯수 업데이트
         createdComment.getPost().addComment();
 
         return new CommentCreationDto.Response(createdComment.getCommentId());
+    }
+
+    private boolean isParentComment(CommentCreationDto.Request commentCreation) {
+        return commentCreation.getParentId() == 0;
     }
 
     /**
@@ -63,8 +70,11 @@ public class CommentService {
                                                      Post post) {
         Pageable pageable = PageRequest.of(page-1, pagePerSize);
 
-        return commentRepository.findPageByPostOrderByCreatedDateAsc(pageable, post)
+        // TODO groupNo 오더링 추가해야함!!!!
+        return commentRepository.findPageByPostOrderByGroupNoAscCreatedDateAsc(pageable, post)
                 .map(CommentFindDto.Response::from);
+//        return commentRepository.findPageByPostOrderByCreatedDateAsc(pageable, post)
+//                .map(CommentFindDto.Response::from);
     }
 
     @Transactional
@@ -74,5 +84,5 @@ public class CommentService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_COMMENT, commentId));
 
         comment.addLike();
-    }
+    }// todo postman 테스트!!!
 }

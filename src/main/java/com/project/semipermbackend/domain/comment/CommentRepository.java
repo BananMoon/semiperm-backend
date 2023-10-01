@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    Page<Comment> findPageByPostOrderByCreatedDateAsc(Pageable pageable, Post post);
+    Page<Comment> findPageByPostOrderByGroupNoAscCreatedDateAsc(Pageable pageable, Post post);
 
     CommentGroupNoMapping findTopByPostOrderByGroupNoDesc(Post post);
 
