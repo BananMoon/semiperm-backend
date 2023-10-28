@@ -3,6 +3,7 @@ package com.project.semipermbackend.member.controller;
 import com.project.semipermbackend.auth.jwt.JwtTokenProvider;
 import com.project.semipermbackend.common.dto.ApiResultDto;
 import com.project.semipermbackend.member.dto.MemberCreation;
+import com.project.semipermbackend.member.dto.ProfileViewResponseDto;
 import com.project.semipermbackend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,14 +23,14 @@ public class MemberController {
      * @param memberCreation
      */
     @PostMapping
-    public ResponseEntity memberJoin(@Valid @RequestBody MemberCreation.RequestDto memberCreation) {
+    public ResponseEntity<Void> memberJoin(@Valid @RequestBody MemberCreation.RequestDto memberCreation) {
 
         memberService.join(memberCreation);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @DeleteMapping("/logout")
-    public ResponseEntity<ApiResultDto<Void>> logout() {
+    public ResponseEntity<Void> logout() {
         Long accountId = JwtTokenProvider.getAccountIdFromContext();
 
         memberService.logout(accountId);
@@ -45,4 +46,24 @@ public class MemberController {
     public ResponseEntity<ApiResultDto<MemberUpdeate.ResponsDto>> memberUpdate() {
 
     }*/
+
+    /**
+     * 마이페이지(프로필) 조회
+     */
+    @GetMapping("/mypage")
+    public ResponseEntity<ApiResultDto<ProfileViewResponseDto>> profileDetails() {
+        Long memberId = JwtTokenProvider.getMemberIdFromContext();
+
+        return new ResponseEntity<>(ApiResultDto.success(memberService.findProfile(memberId)), HttpStatus.FOUND);
+    }
+
+    /**
+     * 마이페이지(프로필) 수정
+     * 닉네임
+     * 생년월일
+     * 성별
+     * 관심시술(SurgeryCategory) 2개 항목
+     */
+
+
 }

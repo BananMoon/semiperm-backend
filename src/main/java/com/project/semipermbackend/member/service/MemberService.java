@@ -2,6 +2,7 @@ package com.project.semipermbackend.member.service;
 
 import com.project.semipermbackend.common.error.ErrorCode;
 import com.project.semipermbackend.common.error.exception.EntityNotFoundException;
+import com.project.semipermbackend.member.dto.ProfileViewResponseDto;
 import com.project.semipermbackend.member.exception.UnauthenticatedUserException;
 import com.project.semipermbackend.common.utils.StringUtils;
 import com.project.semipermbackend.domain.account.Account;
@@ -21,6 +22,7 @@ import java.util.Optional;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final AccountRepository accountRepository;
+
     @Transactional
     public void join(MemberCreation.RequestDto memberCreation) {
         // 1. 계정 테이블에서 조회
@@ -49,7 +51,20 @@ public class MemberService {
         account.joinSuccess();
     }
 
-    public Member getMemberByMemberId(Long memberId) {
+    public ProfileViewResponseDto findProfile(Long memberId) {
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_MEMBER));
+
+        return ProfileViewResponseDto.builder()
+                .nickname(member.getNickname())
+                .profileImageUrl(member.getAccount().getProfileImageUrl())
+                .birth(member.getBirth())
+                .gender(member.getGender())
+                .interestingFields(member.getInterestingFields())
+                .build();
+    }
+
+    public Optional<Member> getMemberByMemberId(Long memberId) {
         return memberRepository.findByMemberId(memberId);
     }
 
@@ -63,4 +78,5 @@ public class MemberService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_ACCOUNT, accountId));
         account.logout();
     }
+
 }
