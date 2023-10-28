@@ -20,6 +20,8 @@ public enum ErrorCode {
 //   member, account
     NOT_FOUND_MEMBER(SC_NOT_FOUND, "존재하지 않는 회원입니다. 회원가입이 필요합니다."),
     NOT_FOUND_ACCOUNT(SC_NOT_FOUND, "해당 계정(account)이 존재하지 않습니다."),
+    INAPPROPRIATE_PERMISSION(SC_BAD_REQUEST, "부적합한 권한입니다."),
+    SAME_NICKNAME_EXISTS(SC_CONFLICT, "동일한 닉네임이 이미 존재합니다."),
 //    token
     TOKEN_EXPIRED_ERROR(SC_BAD_REQUEST, "JWT 토큰이 만료되었습니다."),
     UNSUPPORTED_TOKEN_ERROR(SC_NOT_ACCEPTABLE, "지원하지 않는 JWT 토큰입니다."),
@@ -28,7 +30,9 @@ public enum ErrorCode {
 
     // post & comment
     , NOT_FOUND_POST(SC_NOT_FOUND, "해당 게시글이 존재하지 않습니다."),
-    NOT_FOUND_COMMENT(SC_NOT_FOUND, "해당 댓글이 존재하지 않습니다.");
+    NOT_FOUND_COMMENT(SC_NOT_FOUND, "해당 댓글이 존재하지 않습니다."),
+    ALREADY_MEMBER_ZZIM_STORE(SC_CONFLICT, "이미 해당 사업장을 찜하였습니다.")
+    ;
 
 
     private final int status;
