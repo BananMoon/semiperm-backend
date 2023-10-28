@@ -1,9 +1,12 @@
 package com.project.semipermbackend.domain.comment;
 
+import com.project.semipermbackend.comment.dto.CommentUpdateDto;
 import com.project.semipermbackend.domain.common.BaseTimeEntity;
 import com.project.semipermbackend.domain.member.Member;
 import com.project.semipermbackend.domain.post.Post;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -11,10 +14,12 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Builder
+@SQLDelete(sql = "UPDATE comment SET use_yn = false WHERE comment_id = ?")
 @Where(clause = "use_yn = true")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor//(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(name = "comment")
+@DynamicUpdate
 public class Comment extends BaseTimeEntity {
 
     @Id
@@ -43,11 +48,15 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "group_no")
     private Long groupNo;
 
-    @Builder.Default
+    @Setter
     @Column(name = "like_count")
     private int likeCount = 0;
 
     public void addLike() {
         this.likeCount += 1;
+    }
+
+    public void update(CommentUpdateDto.Request request) {
+        this.content = request.getContent();
     }
 }

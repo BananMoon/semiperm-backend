@@ -71,7 +71,7 @@ public interface PostFindDto {
 
         private static String subString(String content) {
             int viewLimitLength = 100;
-            
+
             if (content.length() < viewLimitLength) {
                 return content;
             }
