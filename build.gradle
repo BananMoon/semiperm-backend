@@ -51,6 +51,11 @@ dependencies {
 	asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
+	// querydsl
+	implementation 'com.querydsl:querydsl-jpa'
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa"
+	annotationProcessor("javax.persistence:javax.persistence-api")
+	annotationProcessor("javax.annotation:javax.annotation-api")
 }
 
 tasks.named('test') {
@@ -67,4 +72,18 @@ tasks.named('asciidoctor') {
 
 asciidoctor.doFirst {
 	delete file('src/main/resouces/static/docs')
+}
+
+// querydsl 추가
+def generated='src/main/generated'
+sourceSets {
+	main.java.srcDirs += [ generated ]
+}
+// build compile에 querydsl compile 추가되도록 task 추가
+tasks.withType(JavaCompile) {
+	options.annotationProcessorGeneratedSourcesDirectory = file(generated)
+}
+
+clean.doLast {
+	file(generated).deleteDir()
 }
