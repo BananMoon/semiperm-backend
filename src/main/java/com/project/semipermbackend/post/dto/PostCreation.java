@@ -32,6 +32,6 @@ public interface PostCreation {
     @Getter
     @AllArgsConstructor
     class ResponseDto {
-        Long postId;
+        Long reviewId;
     }
 }

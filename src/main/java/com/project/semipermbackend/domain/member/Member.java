@@ -6,18 +6,24 @@ import com.project.semipermbackend.domain.account.Account;
 import com.project.semipermbackend.domain.code.SurgeryCategory;
 import com.project.semipermbackend.domain.code.MemberNeeds;
 import com.project.semipermbackend.domain.common.BaseTimeEntity;
+import com.project.semipermbackend.domain.store.MemberZzimStore;
+import com.project.semipermbackend.member.dto.MyPageDto;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // 기본 생성자를 무분별하게 사용하지 못하게 하여 setter통한 불완전한 객체 생성을 막는다.
 @AllArgsConstructor
 @Table(name = "member")
+@SQLDelete(sql = "UPDATE member SET use_yn = false WHERE member_id = ?")
 @Where(clause = "use_yn = true")
 @Builder
 public class Member extends BaseTimeEntity {
@@ -52,8 +58,23 @@ public class Member extends BaseTimeEntity {
     @Builder.Default
     private Set<MemberNeeds> needInformations = new HashSet<>();
 
-
     @Column(name="nickname", nullable = false, length = 50)
     private String nickname;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
+    private List<MemberZzimStore> memberZzimStores = new ArrayList<>();
+
+
+    public void addZzimStore(MemberZzimStore memberZzimStore) {
+        this.memberZzimStores.add(memberZzimStore);
+    }
+
+    public void update(MyPageDto mypageDto) {
+        this.nickname = mypageDto.getNickname();
+        this.birth = mypageDto.getBirth();
+        this.gender = mypageDto.getGender();
+        this.interestingFields = mypageDto.getInterestingFields();
+    }
+
 
 }

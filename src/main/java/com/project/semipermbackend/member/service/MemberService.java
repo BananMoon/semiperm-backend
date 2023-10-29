@@ -1,8 +1,9 @@
 package com.project.semipermbackend.member.service;
 
 import com.project.semipermbackend.common.error.ErrorCode;
+import com.project.semipermbackend.common.error.exception.EntityAlreadyExistsException;
 import com.project.semipermbackend.common.error.exception.EntityNotFoundException;
-import com.project.semipermbackend.member.dto.ProfileViewResponseDto;
+import com.project.semipermbackend.member.dto.MyPageDto;
 import com.project.semipermbackend.member.exception.UnauthenticatedUserException;
 import com.project.semipermbackend.common.utils.StringUtils;
 import com.project.semipermbackend.domain.account.Account;
@@ -51,11 +52,11 @@ public class MemberService {
         account.joinSuccess();
     }
 
-    public ProfileViewResponseDto findProfile(Long memberId) {
+    public MyPageDto findProfile(Long memberId) {
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_MEMBER));
 
-        return ProfileViewResponseDto.builder()
+        return MyPageDto.builder()
                 .nickname(member.getNickname())
                 .profileImageUrl(member.getAccount().getProfileImageUrl())
                 .birth(member.getBirth())
@@ -79,4 +80,18 @@ public class MemberService {
         account.logout();
     }
 
+    // TODO image url 수정 필요하면 account 업데이트해야함.
+    @Transactional
+    public void updateProfile(Long memberId, MyPageDto mypageDto) {
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_MEMBER));
+
+        Boolean nicknameDuplCheck = memberRepository.existsByNickname(mypageDto.getNickname());
+        if (nicknameDuplCheck) {
+            throw new EntityAlreadyExistsException(ErrorCode.SAME_NICKNAME_EXISTS);
+        }
+
+        // TODO 왜 member_interest_fields 테이블 update 아닌 delete/insert 되지?
+        member.update(mypageDto);
+    }
 }

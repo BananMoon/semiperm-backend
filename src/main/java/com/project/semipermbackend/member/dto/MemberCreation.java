@@ -6,6 +6,7 @@ import com.project.semipermbackend.domain.code.SurgeryCategory;
 import com.project.semipermbackend.domain.code.MemberNeeds;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NonNull;
 
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ import java.util.Set;
 public interface MemberCreation {
     @Builder
     @AllArgsConstructor
+    @Getter
     class RequestDto {
         @NonNull
         Long accountId;

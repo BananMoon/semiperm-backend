@@ -3,7 +3,7 @@ package com.project.semipermbackend.member.controller;
 import com.project.semipermbackend.auth.jwt.JwtTokenProvider;
 import com.project.semipermbackend.common.dto.ApiResultDto;
 import com.project.semipermbackend.member.dto.MemberCreation;
-import com.project.semipermbackend.member.dto.ProfileViewResponseDto;
+import com.project.semipermbackend.member.dto.MyPageDto;
 import com.project.semipermbackend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -51,7 +51,7 @@ public class MemberController {
      * 마이페이지(프로필) 조회
      */
     @GetMapping("/mypage")
-    public ResponseEntity<ApiResultDto<ProfileViewResponseDto>> profileDetails() {
+    public ResponseEntity<ApiResultDto<MyPageDto>> profileDetails() {
         Long memberId = JwtTokenProvider.getMemberIdFromContext();
 
         return new ResponseEntity<>(ApiResultDto.success(memberService.findProfile(memberId)), HttpStatus.FOUND);
@@ -64,6 +64,13 @@ public class MemberController {
      * 성별
      * 관심시술(SurgeryCategory) 2개 항목
      */
+    @PutMapping("/mypage")
+    public ResponseEntity<Void> profileUpdate(@Valid @RequestBody MyPageDto mypageDto) {
+        Long memberId = JwtTokenProvider.getMemberIdFromContext();
+        memberService.updateProfile(memberId, mypageDto);
+
+        return ResponseEntity.ok().build();
+    }
 
 
 }
