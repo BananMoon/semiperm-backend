@@ -1,9 +1,12 @@
 package com.project.semipermbackend.comment.service;
 
+import com.project.semipermbackend.auth.jwt.JwtTokenProvider;
 import com.project.semipermbackend.comment.dto.CommentCreationDto;
 import com.project.semipermbackend.comment.dto.CommentFindDto;
+import com.project.semipermbackend.comment.dto.CommentUpdateDto;
 import com.project.semipermbackend.common.error.ErrorCode;
 import com.project.semipermbackend.common.error.exception.EntityNotFoundException;
+import com.project.semipermbackend.common.error.exception.InappropriatePermissionException;
 import com.project.semipermbackend.domain.comment.Comment;
 import com.project.semipermbackend.domain.comment.CommentGroupNoMapping;
 import com.project.semipermbackend.domain.comment.CommentRepository;
@@ -24,12 +27,13 @@ import java.util.Objects;
 @Service
 public class CommentService {
     private final CommentRepository commentRepository;
-    private final MemberService memberService;
     private final PostRepository postRepository;
+    private final MemberService memberService;
     @Transactional
     public CommentCreationDto.Response create(Long memberId, Long postId, CommentCreationDto.Request commentCreation) {
         // 1. 회원 조회
-        Member member = memberService.getMemberByMemberId(memberId);
+        Member member = memberService.getMemberByMemberId(memberId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_MEMBER));
 
         // 2. 게시글 조회
         Post post = postRepository.findByPostId(postId)
@@ -42,7 +46,7 @@ public class CommentService {
         // parentId==0: 부모이므로 새 groupNo 사용 (parentId!=0: 자식은 dto 내 부모의 groupNo 사용)
         if (isParentComment(commentCreation)) {
             CommentGroupNoMapping groupNo = commentRepository.findTopByPostOrderByGroupNoDesc(post);
-            if (Objects.isNull(groupNo.getGroupNo())) {
+            if (Objects.isNull(groupNo) || Objects.isNull(groupNo.getGroupNo())) {
                 newComment.setGroupNo(0L);
             } else {
                 newComment.setGroupNo(groupNo.getGroupNo() + 1);
@@ -68,13 +72,10 @@ public class CommentService {
     public Page<CommentFindDto.Response> getComments(int page,
                                                      int pagePerSize,
                                                      Post post) {
-        Pageable pageable = PageRequest.of(page-1, pagePerSize);
+        Pageable pageable = PageRequest.of(page, pagePerSize);
 
-        // TODO groupNo 오더링 추가해야함!!!!
-        return commentRepository.findPageByPostOrderByGroupNoAscCreatedDateAsc(pageable, post)
+        return commentRepository.findAllByPostOrderByGroupNoAscCreatedDateAsc(pageable, post)
                 .map(CommentFindDto.Response::from);
-//        return commentRepository.findPageByPostOrderByCreatedDateAsc(pageable, post)
-//                .map(CommentFindDto.Response::from);
     }
 
     @Transactional
@@ -84,5 +85,46 @@ public class CommentService {
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_COMMENT, commentId));
 
         comment.addLike();
-    }// todo postman 테스트!!!
+    }
+
+    /**
+     * 내가 쓴 댓글 조회
+     */
+    public Page<CommentFindDto.Response> findMyComments(int page, int perSize, Long memberId) {
+        Member member = memberService.getMemberByMemberId(memberId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_COMMENT));
+
+        Pageable pageable = PageRequest.of(page, perSize);
+
+        return commentRepository.findAllByMember(pageable, member)
+                .map(CommentFindDto.Response::forMyPage);
+    }
+
+    // 수정
+    @Transactional
+    public void updateOne(Long commentId, CommentUpdateDto.Request requestDto) {
+        Long memberId = JwtTokenProvider.getMemberIdFromContext();
+        Member loginedUser = memberService.getMemberByMemberId(memberId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_MEMBER));
+
+        Comment comment = commentRepository.findByCommentId(commentId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_COMMENT, commentId));
+
+        if (!loginedUser.getMemberId().equals(comment.getMember().getMemberId())) {
+            throw new InappropriatePermissionException();
+        }
+        comment.update(requestDto);
+    }
+
+    @Transactional
+    public void deleteOne(Long commentId) {
+        Long memberId = JwtTokenProvider.getMemberIdFromContext();
+        Member member = memberService.getMemberByMemberId(memberId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_MEMBER));
+
+        Comment comment = commentRepository.findByCommentIdAndMember(commentId, member)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_COMMENT, commentId));
+
+        commentRepository.delete(comment);
+    }
 }
