@@ -61,12 +61,8 @@ public class Post extends BaseTimeEntity {
     @Column(name = "view_count", nullable = false)
     private int viewCount = 0;
 
-    @Builder.Default
-    @Column(name = "comment_count", nullable = false)
-    private int commentCount = 0;
-
-    public void addComment() {
-        commentCount += 1;
+    public void addComment(Comment comment) {
+        comments.add(comment);
     }
 
     public void addLike() {
