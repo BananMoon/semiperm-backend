@@ -4,6 +4,7 @@ import com.project.semipermbackend.auth.jwt.JwtTokenProvider;
 import com.project.semipermbackend.common.dto.ApiResultDto;
 import com.project.semipermbackend.common.dto.Pagination;
 import com.project.semipermbackend.common.utils.PaginationUtil;
+import com.project.semipermbackend.domain.code.PostSorting;
 import com.project.semipermbackend.store.dto.StoreZzimCreationDto;
 import com.project.semipermbackend.store.dto.StoreZzimFindDto;
 import com.project.semipermbackend.store.service.StoreService;
@@ -34,15 +35,15 @@ public class StoreController {
         StoreZzimCreationDto.Response response = storeService.create(memberId, storeZzimCreation);
         return new ResponseEntity<>(ApiResultDto.success(response), HttpStatus.CREATED);
     }
-    // 나의 찜 조회 (default : 날짜순)
-    // TODO 추후 리뷰 갯수 순 오더링 기능 추가 가능
+    // 나의 찜 조회 - 날짜순(default), 리뷰 갯수 순
     @GetMapping
     public ResponseEntity<ApiResultDto<Pagination<StoreZzimFindDto.Response>>> zzimStores(
             @RequestParam(name = "page", defaultValue = "1", required = false) Integer page,
-            @RequestParam(name = "perSize", defaultValue = "10", required = false) Integer perSize) {
+            @RequestParam(name = "perSize", defaultValue = "10", required = false) Integer perSize,
+            @RequestParam(name="sorting", defaultValue = "LATEST", required = false) PostSorting sorting) {
         Long memberId = JwtTokenProvider.getMemberIdFromContext();
 
-        Page<StoreZzimFindDto.Response> response = storeService.find(page - 1, perSize, memberId);
+        Page<StoreZzimFindDto.Response> response = storeService.find(page - 1, perSize, memberId, sorting);
         Pagination<StoreZzimFindDto.Response> paginationDto = PaginationUtil.pageToPagination(response);
         return new ResponseEntity<>(ApiResultDto.success(paginationDto), HttpStatus.FOUND);
     }

@@ -10,7 +10,10 @@ import java.util.stream.Stream;
 public enum PostSorting implements EnumMapperType {
     POPULARITY("인기순"),
     LATEST("최신순"),
-    LIKE("좋아요순")
+    LIKE("좋아요순"),
+
+    // 찜 조회 시 사용
+    REVIEW_COUNT("리뷰 갯수순")
     ;
 
     private final String title;

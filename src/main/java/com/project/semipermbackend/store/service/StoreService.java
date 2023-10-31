@@ -3,6 +3,7 @@ package com.project.semipermbackend.store.service;
 import com.project.semipermbackend.common.error.ErrorCode;
 import com.project.semipermbackend.common.error.exception.EntityAlreadyExistsException;
 import com.project.semipermbackend.common.error.exception.EntityNotFoundException;
+import com.project.semipermbackend.domain.code.PostSorting;
 import com.project.semipermbackend.domain.member.Member;
 import com.project.semipermbackend.domain.store.MemberZzimStore;
 import com.project.semipermbackend.domain.store.MemberZzimStoreRepository;
@@ -33,50 +34,56 @@ public class StoreService {
     @Transactional
     public StoreZzimCreationDto.Response create(Long memberId, StoreZzimCreationDto.Request storeSaveCreation) {
         String encodedPlaceId = Base64.getEncoder().encodeToString(storeSaveCreation.getPlaceId().getBytes());
-        // 멤버 조회
         Member member = memberService.getMemberByMemberId(memberId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_MEMBER));
 
-        // 1. plcae_id 있는지 확인
-        Optional<Store> optionalStore = storeRepository.getStoreByEncodedPlaceId(encodedPlaceId);
+        // 1. Store 조회
+        Store store = createOrFindExistingStore(encodedPlaceId);
 
-        // 1.1 없는 사업장이면 placeId 와 함께 Store 테이블 저장 (찜/리뷰 이력 X)
-        Store savedStore = null;
-        MemberZzimStore memberZzimStore = null;
-        if (optionalStore.isEmpty()) {
-            // 사업장 생성
-            savedStore = storeRepository.save(Store.create(encodedPlaceId));
-
-            // 찜 엔티티 생성
-            memberZzimStore = MemberZzimStore.builder().member(member).store(savedStore).build();
-            savedStore.addZzimStore(memberZzimStore);
-        // 1.2 사업장 존재하면
-        } else {
-            Store existingStore = optionalStore.get();
-
-            // 찜 존재하면 Error
-            Optional<MemberZzimStore> optionalMemberZzimStore = memberZzimStoreRepository.findByMemberAndStore(member, existingStore);
-            if (optionalMemberZzimStore.isPresent()) {
-                throw new EntityAlreadyExistsException(ErrorCode.ALREADY_MEMBER_ZZIM_STORE);
-            }
-            // 찜 엔티티 생성
-            memberZzimStore = MemberZzimStore.builder().member(member).store(existingStore).build();
-            existingStore.addZzimStore(memberZzimStore);
-        }
         // 2. 찜 생성
+        // 이미 찜했으면 Error
+        Optional<MemberZzimStore> optionalMemberZzimStore = memberZzimStoreRepository.findByMemberAndStore(member, store);
+        if (optionalMemberZzimStore.isPresent()) {
+            throw new EntityAlreadyExistsException(ErrorCode.ALREADY_MEMBER_ZZIM_STORE);
+        }
+        MemberZzimStore memberZzimStore = MemberZzimStore.builder().member(member).store(store).build();
         memberZzimStoreRepository.save(memberZzimStore);
+
+        // 3. 연관 엔티티 처리
+        store.addZzimStore(memberZzimStore);
         member.addZzimStore(memberZzimStore);
+
         return new StoreZzimCreationDto.Response(memberZzimStore.getMemberZzimStoreId());
     }
 
-    public Page<StoreZzimFindDto.Response> find(int page, int perSize, Long memberId) {
+    /**
+     * 나의 찜 조회
+     * @param page
+     * @param perSize
+     * @param memberId
+     * @param sorting
+     * @return
+     */
+    public Page<StoreZzimFindDto.Response> find(int page, int perSize, Long memberId, PostSorting sorting) {
         Member member = memberService.getMemberByMemberId(memberId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_MEMBER));
 
         Pageable pageable = PageRequest.of(page, perSize);
 
-        return memberZzimStoreRepository.findAllByMemberOrderByCreatedDateDesc(pageable, member)
+        return memberZzimStoreRepository.findAllByMemberOrderBy(pageable, member, sorting)
                 .map(StoreZzimFindDto.Response::from);
+    }
+
+    public Store createOrFindExistingStore(String placeId) {
+        Optional<Store> optionalStore = storeRepository.getStoreByEncodedPlaceId(placeId);
+        // 1.1 없는 사업장이면 placeId 와 함께 Store 테이블 저장 (찜/리뷰 이력 X)
+        if (optionalStore.isEmpty()) {
+            // 사업장 생성
+            return storeRepository.save(Store.create(placeId));
+        }
+
+        // 1.2 사업장 존재하면
+        return optionalStore.get();
     }
 
     // 찜 제거
