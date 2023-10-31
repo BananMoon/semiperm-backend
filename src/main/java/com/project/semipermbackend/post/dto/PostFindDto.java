@@ -63,7 +63,6 @@ public interface PostFindDto {
                     .likeCount(post.getLikeCount())
                     .viewCount(post.getViewCount())
                     .elapsedUploadTimeSecondUnit(uploadElaspedTimeDayUnit)
-                    .commentCount(post.getCommentCount())
                     .surgeryCategory(post.getSurgeryCategory().getCode())
                     .postCategory(post.getPostCategory().getCode())
                     .build();

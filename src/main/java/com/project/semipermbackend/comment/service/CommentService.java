@@ -57,7 +57,7 @@ public class CommentService {
         Comment createdComment = commentRepository.save(newComment);
 
         // 4. 게시글 댓글 갯수 업데이트
-        createdComment.getPost().addComment();
+        createdComment.getPost().addComment(createdComment);
 
         return new CommentCreationDto.Response(createdComment.getCommentId());
     }
