@@ -1,6 +1,7 @@
 package com.project.semipermbackend.domain.store;
 
 import com.project.semipermbackend.domain.common.BaseTimeEntity;
+import com.project.semipermbackend.domain.review.Review;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -27,6 +28,9 @@ public class Store extends BaseTimeEntity {
     @Column(name = "total_review_rating")
     private float totalReviewRating = 0;
 
+    @OneToMany(mappedBy = "store")
+    private List<Review> reviews = new ArrayList<>();
+
     public static Store create(String encodedPlaceId) {
         Store store = new Store();
         store.encodedPlaceId = encodedPlaceId;
@@ -34,5 +38,9 @@ public class Store extends BaseTimeEntity {
     }
     public void addZzimStore(MemberZzimStore memberZzimStore) {
         this.memberZzimStores.add(memberZzimStore);
+    }
+
+    public void addReview(Review review) {
+        this.reviews.add(review);
     }
 }
