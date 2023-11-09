@@ -61,16 +61,14 @@ public class StoreService {
      * @param page
      * @param perSize
      * @param memberId
-     * @param sorting
-     * @return
      */
-    public Page<StoreZzimFindDto.Response> find(int page, int perSize, Long memberId, PostSorting sorting) {
+    public Page<StoreZzimFindDto.Response> find(int page, int perSize, Long memberId) {
         Member member = memberService.getMemberByMemberId(memberId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_MEMBER));
 
         Pageable pageable = PageRequest.of(page, perSize);
 
-        return memberZzimStoreRepository.findAllByMemberOrderBy(pageable, member, sorting)
+        return memberZzimStoreRepository.findAllByMemberOrderBy(pageable, member, PostSorting.LATEST)   // default 정렬
                 .map(StoreZzimFindDto.Response::from);
     }
 
