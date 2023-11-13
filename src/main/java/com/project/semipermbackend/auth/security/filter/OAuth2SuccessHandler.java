@@ -3,11 +3,12 @@ package com.project.semipermbackend.auth.security.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.semipermbackend.auth.dto.AuthResponseDto;
 import com.project.semipermbackend.auth.entity.CustomOAuth2UserInfo;
-import com.project.semipermbackend.auth.exception.NotFoundException;
 import com.project.semipermbackend.auth.jwt.JwtTokenProvider;
 import com.project.semipermbackend.auth.service.AuthService;
 import com.project.semipermbackend.common.code.FlagYn;
 import com.project.semipermbackend.common.dto.ApiResultDto;
+import com.project.semipermbackend.common.error.ErrorCode;
+import com.project.semipermbackend.common.error.exception.EntityNotFoundException;
 import com.project.semipermbackend.domain.account.Account;
 import com.project.semipermbackend.domain.member.Member;
 import com.project.semipermbackend.member.service.MemberService;
@@ -81,7 +82,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         //  1. MemberYn : 회원이면 로그인
         if (isPresentAndMember(optionalAccount)) {
             Member member = memberService.getMemberByAccount(account)
-                    .orElseThrow(NotFoundException::new);
+                    .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_MEMBER, account.getAccountId()));
 
             // memberId, accountId를 세팅
             String accessToken = jwtTokenProvider.createAccessToken(member, account);
