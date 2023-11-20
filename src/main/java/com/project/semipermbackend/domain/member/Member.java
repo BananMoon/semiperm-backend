@@ -69,12 +69,13 @@ public class Member extends BaseTimeEntity {
         this.memberZzimStores.add(memberZzimStore);
     }
 
-    public void update(MyPageDto mypageDto) {
+    public void updateMyInfo(MyPageDto mypageDto) {
         this.nickname = mypageDto.getNickname();
         this.birth = mypageDto.getBirth();
         this.gender = mypageDto.getGender();
+    }
+    public void updateMyInterestingSurgery(MyPageDto mypageDto) {
         this.interestingFields = mypageDto.getInterestingFields();
     }
-
 
 }

@@ -37,16 +37,6 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-
-    /**
-     * 회원 수정
-     * @return
-     */
-    /*@PutMapping("/member")
-    public ResponseEntity<ApiResultDto<MemberUpdeate.ResponsDto>> memberUpdate() {
-
-    }*/
-
     /**
      * 마이페이지(프로필) 조회
      */
@@ -62,15 +52,22 @@ public class MemberController {
      * 닉네임
      * 생년월일
      * 성별
-     * 관심시술(SurgeryCategory) 2개 항목
      */
-    @PutMapping("/mypage")
-    public ResponseEntity<Void> profileUpdate(@Valid @RequestBody MyPageDto mypageDto) {
-        Long memberId = JwtTokenProvider.getMemberIdFromContext();
-        memberService.updateProfile(memberId, mypageDto);
+    @PutMapping("/mypage/info")
+    public ResponseEntity<Void> myProfileUpdate(@Valid @RequestBody MyPageDto mypageDto) {
+        memberService.updateMyProfile(JwtTokenProvider.getMemberIdFromContext(), mypageDto);
 
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * 마이페이지(프로필) 수정
+     * 관심시술(SurgeryCategory) 2개 항목
+     */
+    @PutMapping("/mypage/interesting-surgery")
+    public ResponseEntity<Void> myInterestingSurgeryUpdate(@Valid @RequestBody MyPageDto mypageDto) {
+        memberService.updateMyInterestingSurgery(JwtTokenProvider.getMemberIdFromContext(), mypageDto);
+        return ResponseEntity.ok().build();
+    }
 
 }

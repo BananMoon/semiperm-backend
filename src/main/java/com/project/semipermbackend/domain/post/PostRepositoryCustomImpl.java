@@ -56,7 +56,7 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom {
         List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
         switch (postSorting) {
             case POPULARITY -> {
-                orderSpecifiers.add(new OrderSpecifier(Order.DESC, post.commentCount));
+                orderSpecifiers.add(new OrderSpecifier(Order.DESC, post.comments.size()));
                 orderSpecifiers.add(new OrderSpecifier(Order.DESC, post.likeCount));
             }
             case LIKE -> {
@@ -71,7 +71,7 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom {
     }
 
     private BooleanBuilder surgeryCategoryEq(SurgeryCategory filteredSurgeryCategory) {
-        return !(Objects.isNull(filteredSurgeryCategory) || filteredSurgeryCategory.equals(SurgeryCategory.TOTAL)) ? new BooleanBuilder(post.surgeryCategory.eq(filteredSurgeryCategory)) : new BooleanBuilder();
+        return !(Objects.isNull(filteredSurgeryCategory) || filteredSurgeryCategory.equals(SurgeryCategory.ALL)) ? new BooleanBuilder(post.surgeryCategory.eq(filteredSurgeryCategory)) : new BooleanBuilder();
     }
     @Override
     public Page<Post> findAllByTitleOrContentIsContainsIgnoreCaseOrderBySorting(Pageable pageable, String keyword, PostSorting sorting) {

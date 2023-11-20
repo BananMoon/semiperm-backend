@@ -82,7 +82,7 @@ public class MemberService {
 
     // TODO image url 수정 필요하면 account 업데이트해야함.
     @Transactional
-    public void updateProfile(Long memberId, MyPageDto mypageDto) {
+    public void updateMyProfile(Long memberId, MyPageDto mypageDto) {
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_MEMBER));
 
@@ -92,6 +92,13 @@ public class MemberService {
         }
 
         // TODO 왜 member_interest_fields 테이블 update 아닌 delete/insert 되지?
-        member.update(mypageDto);
+        member.updateMyInfo(mypageDto);
+    }
+
+    @Transactional
+    public void updateMyInterestingSurgery(Long memberId, MyPageDto mypageDto) {
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND_MEMBER));
+        member.updateMyInterestingSurgery(mypageDto);
     }
 }
